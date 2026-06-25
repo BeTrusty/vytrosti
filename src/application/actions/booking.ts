@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from '@/infrastructure/db/client';
-import { listings, reservations, tenants, escrows, disputes } from '@/infrastructure/db/schema';
+import { listings, reservations, tenants, escrows, disputes, users, ledgerAccounts } from '@/infrastructure/db/schema';
 import { eq } from 'drizzle-orm';
 import { walletPoolService } from '../services/wallet-pool';
 import { ledgerService } from '../services/ledger';
@@ -69,19 +69,49 @@ export async function createBooking(formData: {
     const platformFee = subtotal * 0.05; // 5% fee
     const totalAmount = subtotal + securityDeposit + platformFee;
 
-    // Create or locate tenant
+    // Locate or dynamically create public user record matching the authenticated session
+    let userRecord = await db.query.users.findFirst({
+      where: eq(users.email, session.user.email),
+    });
+
+    if (!userRecord) {
+      const [newUser] = await db
+        .insert(users)
+        .values({
+          name: session.user.name || session.user.email.split('@')[0],
+          email: session.user.email,
+        })
+        .returning();
+      userRecord = newUser;
+    }
+
+    // Locate or create tenant profile linked to the user
     let tenant = await db.query.tenants.findFirst({
-      where: eq(tenants.stellarPublicKey, tenantPublicKey),
+      where: eq(tenants.userId, userRecord.id),
     });
 
     if (!tenant) {
       const [newTenant] = await db
         .insert(tenants)
         .values({
+          userId: userRecord.id,
           stellarPublicKey: tenantPublicKey,
         })
         .returning();
       tenant = newTenant;
+
+      // Initialize tenant ledger liability account
+      await db.insert(ledgerAccounts).values({
+        id: `liabilities:tenants:${tenant.id}`,
+        name: `${userRecord.name} Refundable Deposits`,
+        type: 'liability',
+      });
+    } else if (tenant.stellarPublicKey !== tenantPublicKey) {
+      // If coordinates updated, keep it in sync
+      await db
+        .update(tenants)
+        .set({ stellarPublicKey: tenantPublicKey })
+        .where(eq(tenants.id, tenant.id));
     }
 
     // Create reservation in DB

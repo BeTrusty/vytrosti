@@ -28,6 +28,12 @@ export default async function AdminPage() {
   let ledgerBalances: any[] = [];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let ledgerJournal: any[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let usersList: any[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let ownersList: any[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let tenantsList: any[] = [];
 
   try {
     // 1. Get Listings
@@ -64,6 +70,39 @@ export default async function AdminPage() {
 
     // 6. Get Ledger Entries (Journal) with lines
     ledgerJournal = await ledgerService.getJournalEntries();
+
+    // 7. Get Users
+    usersList = await db.query.users.findMany({
+      orderBy: (u, { desc }) => [desc(u.createdAt)],
+      with: {
+        owner: true,
+        tenant: true,
+      },
+    });
+
+    // 8. Get Owners
+    ownersList = await db.query.owners.findMany({
+      with: {
+        user: true,
+        listings: {
+          with: {
+            reservations: true
+          }
+        }
+      }
+    });
+
+    // 9. Get Tenants
+    tenantsList = await db.query.tenants.findMany({
+      with: {
+        user: true,
+        reservations: {
+          with: {
+            listing: true
+          }
+        }
+      }
+    });
   } catch (error) {
     console.warn('Failed to load DB stats in AdminPage, returning empty datasets:', error);
   }
@@ -118,6 +157,46 @@ export default async function AdminPage() {
         accountPath: l.accountPath,
         amount: l.amount,
         direction: l.direction,
+      })),
+    })),
+    users: usersList.map((u) => ({
+      id: u.id,
+      name: u.name,
+      email: u.email,
+      createdAt: u.createdAt.toISOString(),
+      ownerId: u.owner?.id || null,
+      tenantId: u.tenant?.id || null,
+    })),
+    owners: ownersList.map((o) => ({
+      id: o.id,
+      stellarPublicKey: o.stellarPublicKey,
+      createdAt: o.createdAt.toISOString(),
+      user: {
+        id: o.user.id,
+        name: o.user.name,
+        email: o.user.email,
+      },
+      listings: o.listings.map((l: any) => ({
+        id: l.id,
+        title: l.title,
+        bookingsCount: l.reservations.length,
+      })),
+      totalBookingsReceived: o.listings.reduce((sum: number, l: any) => sum + l.reservations.length, 0),
+    })),
+    tenants: tenantsList.map((t) => ({
+      id: t.id,
+      stellarPublicKey: t.stellarPublicKey,
+      createdAt: t.createdAt.toISOString(),
+      user: {
+        id: t.user.id,
+        name: t.user.name,
+        email: t.user.email,
+      },
+      reservations: t.reservations.map((r: any) => ({
+        id: r.id,
+        status: r.status,
+        subtotalUsdt: r.subtotalUsdt,
+        listingTitle: r.listing.title,
       })),
     })),
   };

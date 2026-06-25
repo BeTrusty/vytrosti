@@ -8,7 +8,7 @@ To ensure codebase health, security, and compliance with public-facing hackathon
 - **No Hardcoded Credentials**: No private keys, database passwords, Stellar seed keys (`S...`), Vercel secrets, or API keys may be present in source code, comments, configuration templates, or documentation.
 - **No Private Data**: Do not include real personal names, real phone numbers, real emails, or internal business secrets in any documentation, test fixtures, or database seeding scripts. Use mocks and variables.
 - **Gitignore Enforcement**: All local config files (e.g. `.env`, `.env.local`, DB state files) must remain gitignored.
-- **Security scan**: Running `npm run verify-done` must pass without any secret leaks flagged.
+- **Security scan**: Running `pnpm run verify-done` must pass without any secret leaks flagged.
 
 ### 2. Double-Entry Ledger Balancing
 - Every financial ledger event or database insert affecting accounts must strictly follow double-entry bookkeeping:
@@ -37,6 +37,6 @@ To ensure codebase health, security, and compliance with public-facing hackathon
 - Keep structures strictly divided within `src/` (Domain, Application, Infrastructure, Presentation).
 
 ### 7. Automated Checks & Quality
-- The code must compile cleanly: `npm run build` or `tsc --noEmit` runs with zero compilation errors.
-- The linter must pass cleanly: `npm run lint` runs with zero errors or warnings.
-- The verification suite must pass: `npm run verify-done` runs with zero violations.
+- The code must compile cleanly: `pnpm run build` or `tsc --noEmit` runs with zero compilation errors.
+- The linter must pass cleanly: `pnpm run lint` runs with zero errors or warnings.
+- The verification suite must pass: `pnpm run verify-done` runs with zero violations.

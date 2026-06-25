@@ -67,6 +67,13 @@ export default async function ListingPage({ params }: ListingPageProps) {
   try {
     listing = await db.query.listings.findFirst({
       where: eq(listings.id, id),
+      with: {
+        owner: {
+          with: {
+            user: true,
+          },
+        },
+      },
     });
   } catch (error) {
     console.warn('Listing query failed, trying fallback list:', error);
@@ -138,7 +145,7 @@ export default async function ListingPage({ params }: ListingPageProps) {
             </div>
             <div className="text-left">
               <p className="text-[10px] font-bold text-[#003527] uppercase tracking-widest">Verified Host</p>
-              <p className="text-sm font-semibold text-slate-800">Sebastian Valerius</p>
+              <p className="text-sm font-semibold text-slate-800">{(listing as any).owner?.user?.name || 'Sebastian Valerius'}</p>
             </div>
           </div>
 

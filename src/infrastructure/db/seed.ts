@@ -1,3 +1,4 @@
+import './loadenv';
 import { runDatabaseSeeder } from './seeder';
 
 async function main() {

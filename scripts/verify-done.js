@@ -295,8 +295,64 @@ function scanFile(filePath, relativePath) {
   }
 }
 
+function checkSessionDocumentation() {
+  try {
+    // Run git status --porcelain to check for staged, unstaged, and untracked files
+    const statusOutput = execSync('git status --porcelain', { encoding: 'utf8' }).trim();
+    if (!statusOutput) {
+      // Repository is clean, no session documentation check needed
+      return;
+    }
+
+    const lines = statusOutput.split('\n').filter(Boolean);
+    const allChanges = [];
+    
+    for (const line of lines) {
+      // XY path or XY "path" - handle status code and spaces robustly
+      const match = line.match(/^.{2}\s+(.*)$/);
+      if (match) {
+        const cleanPath = match[1].trim().replace(/^"|"$/g, '');
+        allChanges.push(cleanPath);
+      }
+    }
+
+    // Check if there are changes outside of docs/ and excluded folders/files
+    const hasCodeChanges = allChanges.some(filePath => {
+      const parts = filePath.replace(/\\/g, '/').split('/');
+      const isDoc = parts[0] === 'docs';
+      const isConfig = EXCLUDE_FILES.includes(parts[parts.length - 1]);
+      const isExcludeDir = parts.slice(0, -1).some(part => EXCLUDE_DIRS.includes(part));
+      return !isDoc && !isConfig && !isExcludeDir;
+    });
+
+    if (hasCodeChanges) {
+      // We have code changes, check for session memory and index updates
+      const hasSessionMemory = allChanges.some(filePath => {
+        const normalized = filePath.replace(/\\/g, '/');
+        return normalized.startsWith('docs/memory/sessions/') && normalized.endsWith('.md');
+      });
+
+      const hasIndexUpdate = allChanges.some(filePath => {
+        const normalized = filePath.replace(/\\/g, '/');
+        return normalized === 'docs/memory/index.md';
+      });
+
+      if (!hasSessionMemory) {
+        logError('No session memory documentation found under docs/memory/sessions/! Every session with code changes MUST record session history in a markdown file (docs/memory/sessions/XXXX-<description>.md).');
+      }
+      if (!hasIndexUpdate) {
+        logError('Session index docs/memory/index.md has not been updated! Please append your session reference to it.');
+      }
+    }
+  } catch (error) {
+    // If git commands fail, log a warning but don't fail verification
+    logWarning('Could not run git status to verify session documentation: ' + error.message);
+  }
+}
+
 console.log('Checking repository security and compliance with Definition of Done...');
 checkGitignore();
+checkSessionDocumentation();
 
 const filesToScan = getFilesToScan();
 for (const { filePath, relativePath } of filesToScan) {

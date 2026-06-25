@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Card, Button, Chip, Input, Table, Alert } from '@heroui/react';
-import { runSeedingAction, triggerPollerAction, resolveDisputeAction } from '@/application/actions/admin';
+import { runSeedingAction, triggerPollerAction, resolveDisputeAction, createUserAction } from '@/application/actions/admin';
 import { 
   LayoutDashboard, 
   RefreshCw, 
@@ -13,7 +13,8 @@ import {
   Layers, 
   Settings, 
   Home, 
-  SlidersHorizontal 
+  SlidersHorizontal,
+  Users
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -67,6 +68,49 @@ export interface DashboardLedgerEntry {
   lines: DashboardLedgerLine[];
 }
 
+export interface DashboardUser {
+  id: string;
+  name: string;
+  email: string;
+  createdAt: string;
+  ownerId: string | null;
+  tenantId: string | null;
+}
+
+export interface DashboardOwner {
+  id: string;
+  stellarPublicKey: string;
+  createdAt: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  listings: {
+    id: string;
+    title: string;
+    bookingsCount: number;
+  }[];
+  totalBookingsReceived: number;
+}
+
+export interface DashboardTenant {
+  id: string;
+  stellarPublicKey: string;
+  createdAt: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  reservations: {
+    id: string;
+    status: string;
+    subtotalUsdt: string;
+    listingTitle: string;
+  }[];
+}
+
 export interface DashboardListing {
   id: string;
   title: string;
@@ -85,10 +129,13 @@ interface AdminDashboardProps {
     disputes: DashboardDispute[];
     ledgerAccounts: DashboardLedgerAccount[];
     ledgerEntries: DashboardLedgerEntry[];
+    users: DashboardUser[];
+    owners: DashboardOwner[];
+    tenants: DashboardTenant[];
   };
 }
 
-type TabType = 'overview' | 'listings' | 'bookings' | 'accounts' | 'ledger' | 'disputes' | 'settings';
+type TabType = 'overview' | 'users' | 'listings' | 'bookings' | 'accounts' | 'ledger' | 'disputes' | 'settings';
 
 export function AdminDashboard({ initialData }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<TabType>('overview');
@@ -100,6 +147,34 @@ export function AdminDashboard({ initialData }: AdminDashboardProps) {
   const [resolvingDisputeId, setResolvingDisputeId] = useState<string | null>(null);
   const [tenantShare, setTenantShare] = useState('');
   const [ownerShare, setOwnerShare] = useState('');
+
+  // User registration form state
+  const [userNameInput, setUserNameInput] = useState('');
+  const [userEmailInput, setUserEmailInput] = useState('');
+  const [userRoleInput, setUserRoleInput] = useState<'owner' | 'tenant' | 'both'>('tenant');
+  const [stellarKeyInput, setStellarKeyInput] = useState('');
+
+  const handleRegisterUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!userNameInput || !userEmailInput || !stellarKeyInput) return;
+    setLoading(true);
+    const result = await createUserAction({
+      name: userNameInput,
+      email: userEmailInput,
+      role: userRoleInput,
+      stellarPublicKey: stellarKeyInput,
+    });
+    setLoading(false);
+    if (result.success) {
+      setUserNameInput('');
+      setUserEmailInput('');
+      setStellarKeyInput('');
+      alert('User and roles coordinates registered successfully!');
+      window.location.reload();
+    } else {
+      alert(result.error || 'Failed to register user');
+    }
+  };
 
   const handleTriggerPoller = async () => {
     setLoading(true);
@@ -159,6 +234,7 @@ export function AdminDashboard({ initialData }: AdminDashboardProps) {
   // Sidebar navigation configuration
   const sidebarItems = [
     { id: 'overview' as TabType, label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'users' as TabType, label: 'Users & Roles', icon: Users },
     { id: 'listings' as TabType, label: 'Listings', icon: Home },
     { id: 'bookings' as TabType, label: 'Bookings', icon: Calendar },
     { id: 'accounts' as TabType, label: 'Account Pool', icon: Key },
@@ -228,6 +304,7 @@ export function AdminDashboard({ initialData }: AdminDashboardProps) {
             </h2>
             <p className="text-slate-400 text-xs mt-1">
               {activeTab === 'overview' && 'Executive overview, stats summary, and general volume tracking.'}
+              {activeTab === 'users' && 'Manage system users, register hosts (owners) and guests (tenants), and configure their Stellar coordinates.'}
               {activeTab === 'listings' && 'Property asset registries managed by property hosts.'}
               {activeTab === 'bookings' && 'Reservations, stays timelines, and rent payments ledger verification.'}
               {activeTab === 'accounts' && 'Coordinates pool allocated to bookings for memo-free verification.'}
@@ -246,6 +323,232 @@ export function AdminDashboard({ initialData }: AdminDashboardProps) {
 
         {/* Tab Panels */}
         <div className="min-h-[400px]">
+          {/* USERS & ROLES PANEL */}
+          {activeTab === 'users' && (
+            <div className="flex flex-col gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                {/* Registries Column */}
+                <div className="lg:col-span-8 flex flex-col gap-8">
+                  {/* Users Registry */}
+                  <Card className="ambient-lift border border-[#eaedff] p-6 rounded-3xl bg-white">
+                    <div className="flex flex-col gap-4 text-left">
+                      <h3 className="font-bold text-[#131b2e] text-base flex items-center gap-2">
+                        <Users className="text-[#003527]" size={20} /> Registered Users Registry
+                      </h3>
+                      <Table className="mt-2">
+                        <Table.ScrollContainer>
+                          <Table.Content aria-label="System Users List">
+                            <Table.Header>
+                              <Table.Column>USER NAME</Table.Column>
+                              <Table.Column>EMAIL</Table.Column>
+                              <Table.Column>ACTIVE ROLES</Table.Column>
+                              <Table.Column>CREATED AT</Table.Column>
+                            </Table.Header>
+                            <Table.Body>
+                              {initialData.users.map((user) => {
+                                const roles: string[] = [];
+                                if (user.ownerId) roles.push('Host');
+                                if (user.tenantId) roles.push('Guest');
+                                if (user.email.includes('admin')) roles.push('Admin');
+                                return (
+                                  <Table.Row key={user.id}>
+                                    <Table.Cell className="font-bold text-slate-800">{user.name}</Table.Cell>
+                                    <Table.Cell className="text-slate-600 text-xs">{user.email}</Table.Cell>
+                                    <Table.Cell>
+                                      <div className="flex gap-1.5 flex-wrap">
+                                        {roles.map(role => (
+                                          <Chip 
+                                            key={role}
+                                            size="sm" 
+                                            color={role === 'Admin' ? 'danger' : role === 'Host' ? 'success' : 'default'} 
+                                            variant="soft"
+                                            className="font-semibold text-[10px]"
+                                          >
+                                            {role}
+                                          </Chip>
+                                        ))}
+                                      </div>
+                                    </Table.Cell>
+                                    <Table.Cell className="text-slate-400 text-xs">
+                                      {new Date(user.createdAt).toLocaleDateString()}
+                                    </Table.Cell>
+                                  </Table.Row>
+                                );
+                              })}
+                            </Table.Body>
+                          </Table.Content>
+                        </Table.ScrollContainer>
+                      </Table>
+                    </div>
+                  </Card>
+
+                  {/* Hosts Registry */}
+                  <Card className="ambient-lift border border-[#eaedff] p-6 rounded-3xl bg-white">
+                    <div className="flex flex-col gap-4 text-left">
+                      <h3 className="font-bold text-[#131b2e] text-base flex items-center gap-2">
+                        <Home className="text-[#003527]" size={20} /> Hosts (Owners) Registry
+                      </h3>
+                      <Table className="mt-2">
+                        <Table.ScrollContainer>
+                          <Table.Content aria-label="Hosts List">
+                            <Table.Header>
+                              <Table.Column>HOST NAME</Table.Column>
+                              <Table.Column>ACCOUNT COORDINATES</Table.Column>
+                              <Table.Column>LISTINGS</Table.Column>
+                              <Table.Column>BOOKINGS RECEIVED</Table.Column>
+                            </Table.Header>
+                            <Table.Body>
+                              {initialData.owners.map((owner) => (
+                                <Table.Row key={owner.id}>
+                                  <Table.Cell>
+                                    <div className="flex flex-col">
+                                      <span className="font-bold text-slate-800 text-sm">{owner.user.name}</span>
+                                      <span className="text-slate-400 text-[10px]">{owner.user.email}</span>
+                                    </div>
+                                  </Table.Cell>
+                                  <Table.Cell className="font-mono text-[10px] text-slate-500 max-w-[140px] truncate">
+                                    {owner.stellarPublicKey}
+                                  </Table.Cell>
+                                  <Table.Cell>
+                                    <div className="flex flex-col gap-0.5 max-w-[180px]">
+                                      <span className="text-xs font-semibold text-slate-700">{owner.listings.length} properties</span>
+                                      {owner.listings.map(l => (
+                                        <span key={l.id} className="text-[10px] text-slate-400 truncate" title={l.title}>
+                                          • {l.title}
+                                        </span>
+                                      ))}
+                                    </div>
+                                  </Table.Cell>
+                                  <Table.Cell className="font-bold text-slate-800 text-center">{owner.totalBookingsReceived}</Table.Cell>
+                                </Table.Row>
+                              ))}
+                            </Table.Body>
+                          </Table.Content>
+                        </Table.ScrollContainer>
+                      </Table>
+                    </div>
+                  </Card>
+
+                  {/* Guests Registry */}
+                  <Card className="ambient-lift border border-[#eaedff] p-6 rounded-3xl bg-white">
+                    <div className="flex flex-col gap-4 text-left">
+                      <h3 className="font-bold text-[#131b2e] text-base flex items-center gap-2">
+                        <Calendar className="text-[#003527]" size={20} /> Guests (Tenants) Registry
+                      </h3>
+                      <Table className="mt-2">
+                        <Table.ScrollContainer>
+                          <Table.Content aria-label="Guests List">
+                            <Table.Header>
+                              <Table.Column>GUEST NAME</Table.Column>
+                              <Table.Column>ACCOUNT COORDINATES</Table.Column>
+                              <Table.Column>RESERVATIONS MADE</Table.Column>
+                            </Table.Header>
+                            <Table.Body>
+                              {initialData.tenants.map((tenant) => (
+                                <Table.Row key={tenant.id}>
+                                  <Table.Cell>
+                                    <div className="flex flex-col">
+                                      <span className="font-bold text-slate-800 text-sm">{tenant.user.name}</span>
+                                      <span className="text-slate-400 text-[10px]">{tenant.user.email}</span>
+                                    </div>
+                                  </Table.Cell>
+                                  <Table.Cell className="font-mono text-[10px] text-slate-500 max-w-[140px] truncate">
+                                    {tenant.stellarPublicKey}
+                                  </Table.Cell>
+                                  <Table.Cell>
+                                    <div className="flex flex-col gap-0.5">
+                                      <span className="text-xs font-semibold text-slate-700">{tenant.reservations.length} bookings</span>
+                                      {tenant.reservations.map(r => (
+                                        <span key={r.id} className="text-[10px] text-slate-400">
+                                          • {r.listingTitle} ({r.status.replace('_', ' ')})
+                                        </span>
+                                      ))}
+                                    </div>
+                                  </Table.Cell>
+                                </Table.Row>
+                              ))}
+                            </Table.Body>
+                          </Table.Content>
+                        </Table.ScrollContainer>
+                      </Table>
+                    </div>
+                  </Card>
+                </div>
+
+                {/* Form Column */}
+                <div className="lg:col-span-4">
+                  <Card className="ambient-lift border border-[#eaedff] p-6 rounded-3xl bg-white sticky top-24">
+                    <form onSubmit={handleRegisterUser} className="flex flex-col gap-4 text-left">
+                      <div>
+                        <h3 className="font-bold text-[#131b2e] text-base">Register User & Roles</h3>
+                        <p className="text-slate-400 text-xs mt-1">Add a new user and assign their Host/Guest roles on the protocol.</p>
+                      </div>
+
+                      <div className="flex flex-col gap-1">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Full Name</label>
+                        <Input
+                          type="text"
+                          placeholder="e.g. Sebastian Valerius"
+                          value={userNameInput}
+                          onChange={(e) => setUserNameInput(e.target.value)}
+                          required
+                          className="bg-white border border-[#eaedff] focus-within:border-[#003527] rounded-xl px-3 py-2 w-full text-sm outline-none"
+                        />
+                      </div>
+
+                      <div className="flex flex-col gap-1">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Email Address</label>
+                        <Input
+                          type="email"
+                          placeholder="e.g. sebastian@vytrosti.net"
+                          value={userEmailInput}
+                          onChange={(e) => setUserEmailInput(e.target.value)}
+                          required
+                          className="bg-white border border-[#eaedff] focus-within:border-[#003527] rounded-xl px-3 py-2 w-full text-sm outline-none"
+                        />
+                      </div>
+
+                      <div className="flex flex-col gap-1">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Protocol Role</label>
+                        <select
+                          value={userRoleInput}
+                          onChange={(e) => setUserRoleInput(e.target.value as 'owner' | 'tenant' | 'both')}
+                          className="bg-white border border-[#eaedff] focus:border-[#003527] focus:ring-1 focus:ring-[#003527] rounded-xl px-3 py-2 w-full text-sm outline-none font-medium text-slate-800"
+                        >
+                          <option value="tenant">Guest (Tenant)</option>
+                          <option value="owner">Host (Owner)</option>
+                          <option value="both">Both (Host & Guest)</option>
+                        </select>
+                      </div>
+
+                      <div className="flex flex-col gap-1">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Stellar Account Coordinates</label>
+                        <Input
+                          type="text"
+                          placeholder="G..."
+                          value={stellarKeyInput}
+                          onChange={(e) => setStellarKeyInput(e.target.value)}
+                          required
+                          className="bg-white border border-[#eaedff] focus-within:border-[#003527] rounded-xl px-3 py-2 w-full text-sm font-mono"
+                        />
+                      </div>
+
+                      <Button
+                        type="submit"
+                        isPending={loading}
+                        className="w-full bg-[#003527] text-white font-bold rounded-xl mt-2 py-2"
+                      >
+                        Register Coordinates
+                      </Button>
+                    </form>
+                  </Card>
+                </div>
+
+              </div>
+            </div>
+          )}
+
           {/* OVERVIEW PANEL */}
           {activeTab === 'overview' && (
             <div className="flex flex-col gap-6">

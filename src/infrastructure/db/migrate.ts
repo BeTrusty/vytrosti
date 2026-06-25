@@ -1,3 +1,4 @@
+import './loadenv';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { db } from './client';
 import path from 'path';

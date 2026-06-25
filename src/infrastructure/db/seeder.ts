@@ -1,5 +1,6 @@
 import { db } from './client';
 import { 
+  users,
   owners, 
   tenants, 
   listings, 
@@ -30,6 +31,7 @@ export async function runDatabaseSeeder() {
   await db.delete(listings);
   await db.delete(tenants);
   await db.delete(owners);
+  await db.delete(users);
   await db.delete(wallets);
   await db.delete(ledgerAccounts);
 
@@ -52,36 +54,62 @@ export async function runDatabaseSeeder() {
     await db.insert(ledgerAccounts).values(acc).onConflictDoNothing();
   }
 
+  // 1.5 Seed Users
+  console.log('Seeding public users...');
+  const [user1] = await db.insert(users).values({
+    name: 'Sebastian Valerius',
+    email: 'admin.demo@vytrosti.com',
+  }).returning();
+
+  const [user2] = await db.insert(users).values({
+    name: 'Alexander Sterling',
+    email: 'host2.demo@vytrosti.com',
+  }).returning();
+
+  const [user3] = await db.insert(users).values({
+    name: 'Elena Rostova',
+    email: 'guest1.demo@vytrosti.com',
+  }).returning();
+
+  const [user4] = await db.insert(users).values({
+    name: 'Lucas Miller',
+    email: 'guest2.demo@vytrosti.com',
+  }).returning();
+
   // 2. Create Owners
   console.log('Seeding owners...');
   const [owner1] = await db.insert(owners).values({
+    userId: user1.id,
     stellarPublicKey: 'GCQTG2372RLF74OWMEV4SIOTWIEZCA4DZ32C37R7635M262NZKU67252',
   }).returning();
 
   const [owner2] = await db.insert(owners).values({
+    userId: user2.id,
     stellarPublicKey: 'GB22U5TRT4IQLH6OEX7D2DDKNYZ7L6L552M5J3T3QLNV6J223I56MOWH',
   }).returning();
 
   // Create Owner ledger accounts
   await db.insert(ledgerAccounts).values([
-    { id: `liabilities:owners:${owner1.id}`, name: `Owner 1 Owed Balance`, type: 'liability' as const },
-    { id: `liabilities:owners:${owner2.id}`, name: `Owner 2 Owed Balance`, type: 'liability' as const },
+    { id: `liabilities:owners:${owner1.id}`, name: `${user1.name} Owed Balance`, type: 'liability' as const },
+    { id: `liabilities:owners:${owner2.id}`, name: `${user2.name} Owed Balance`, type: 'liability' as const },
   ]);
 
   // 3. Create Tenants
   console.log('Seeding tenants...');
   const [tenant1] = await db.insert(tenants).values({
+    userId: user3.id,
     stellarPublicKey: 'GCTENANT455NDJE7QWMEV4SIOTWIEZCA4DZ32C37R7635M262NZKU6GUEP',
   }).returning();
 
   const [tenant2] = await db.insert(tenants).values({
+    userId: user4.id,
     stellarPublicKey: 'GCTENANT8821092QWMEV4SIOTWIEZCA4DZ32C37R7635M262NZKU6SAMPLE',
   }).returning();
 
   // Create Tenant ledger accounts
   await db.insert(ledgerAccounts).values([
-    { id: `liabilities:tenants:${tenant1.id}`, name: `Tenant 1 Refundable Deposits`, type: 'liability' as const },
-    { id: `liabilities:tenants:${tenant2.id}`, name: `Tenant 2 Refundable Deposits`, type: 'liability' as const },
+    { id: `liabilities:tenants:${tenant1.id}`, name: `${user3.name} Refundable Deposits`, type: 'liability' as const },
+    { id: `liabilities:tenants:${tenant2.id}`, name: `${user4.name} Refundable Deposits`, type: 'liability' as const },
   ]);
 
   // 4. Create Listings (4 Premium properties matching Stitch's homepage proposal)
@@ -724,9 +752,10 @@ export async function runDatabaseSeeder() {
     console.warn('NEON_AUTH_BASE_URL is not set — skipping auth user seeding.');
   } else {
     const testUsers = [
-      { email: 'admin.demo@vytrosti.com',  password: 'Vytr0sti#Admin2024!',  name: 'Admin User'    },
-      { email: 'guest1.demo@vytrosti.com', password: 'Vytr0sti#Guest1!', name: 'Guest User 1'  },
-      { email: 'guest2.demo@vytrosti.com', password: 'Vytr0sti#Guest2!', name: 'Guest User 2'  },
+      { email: 'admin.demo@vytrosti.com',  password: 'Vytr0sti#Admin2024!',  name: 'Sebastian Valerius' },
+      { email: 'guest1.demo@vytrosti.com', password: 'Vytr0sti#Guest1!', name: 'Elena Rostova'       },
+      { email: 'guest2.demo@vytrosti.com', password: 'Vytr0sti#Guest2!', name: 'Lucas Miller'        },
+      { email: 'host2.demo@vytrosti.com',  password: 'Vytr0sti#Host2!',  name: 'Alexander Sterling' },
     ];
 
     for (const user of testUsers) {

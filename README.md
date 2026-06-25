@@ -38,7 +38,7 @@ For details, refer to the project rule files under [`docs/rules/`](file:///Users
 
 Install all required dependencies:
 ```bash
-npm install
+pnpm install
 ```
 
 ### ⚙️ Database Setup
@@ -46,16 +46,16 @@ npm install
 Run database migrations and seed default listings/mock users:
 ```bash
 # Run migrations & seed data
-npm run db:setup
+pnpm run db:setup
 ```
 
 Or run them individually:
 ```bash
 # Run migrations
-npm run db:migrate
+pnpm run db:migrate
 
 # Seed database
-npm run db:seed
+pnpm run db:seed
 ```
 
 ---
@@ -64,15 +64,15 @@ npm run db:seed
 
 - **Development Server**: Start Next.js in development mode.
   ```bash
-  npm run dev
+  pnpm run dev
   ```
 - **Production Build**: Compile the TypeScript project and generate the Next.js optimized build.
   ```bash
-  npm run build
+  pnpm run build
   ```
 - **Compliance Scanner (Verify Done)**: Verify that all code meets the security, linting, and architectural standards before committing.
   ```bash
-  npm run verify-done
+  pnpm run verify-done
   ```
 
 ---

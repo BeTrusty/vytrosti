@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from '@/infrastructure/db/client';
-import { disputes, escrows, reservations } from '@/infrastructure/db/schema';
+import { disputes, escrows, reservations, users, owners, tenants, ledgerAccounts } from '@/infrastructure/db/schema';
 import { eq } from 'drizzle-orm';
 import { trustlessProvider } from '@/infrastructure/trustless/provider';
 import { ledgerService } from '../services/ledger';
@@ -143,6 +143,74 @@ export async function triggerPollerAction() {
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Poller check failed',
+    };
+  }
+}
+
+// Create new User and Owner/Tenant roles
+export async function createUserAction(formData: {
+  name: string;
+  email: string;
+  role: 'owner' | 'tenant' | 'both';
+  stellarPublicKey: string;
+}) {
+  try {
+    const { name, email, role, stellarPublicKey } = formData;
+
+    if (!name || !email || !role || !stellarPublicKey) {
+      throw new Error('All fields are required');
+    }
+
+    await db.transaction(async (tx) => {
+      // 1. Insert user
+      const [user] = await tx
+        .insert(users)
+        .values({ name, email })
+        .returning();
+
+      // 2. Insert owner profile if applicable
+      if (role === 'owner' || role === 'both') {
+        const [owner] = await tx
+          .insert(owners)
+          .values({
+            userId: user.id,
+            stellarPublicKey,
+          })
+          .returning();
+
+        // Create liability account for owner
+        await tx.insert(ledgerAccounts).values({
+          id: `liabilities:owners:${owner.id}`,
+          name: `${name} Owed Balance`,
+          type: 'liability',
+        });
+      }
+
+      // 3. Insert tenant profile if applicable
+      if (role === 'tenant' || role === 'both') {
+        const [tenant] = await tx
+          .insert(tenants)
+          .values({
+            userId: user.id,
+            stellarPublicKey,
+          })
+          .returning();
+
+        // Create liability account for tenant
+        await tx.insert(ledgerAccounts).values({
+          id: `liabilities:tenants:${tenant.id}`,
+          name: `${name} Refundable Deposits`,
+          type: 'liability',
+        });
+      }
+    });
+
+    revalidatePath('/admin');
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to create user and profiles',
     };
   }
 }

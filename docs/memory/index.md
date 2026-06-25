@@ -20,3 +20,8 @@ This index tracks all agent sessions and the historical log of Vytrosti's design
   - Objective: Upgrade Stellar SDK package, implement QR payment flow, and add toast notifications.
 * [0007-auth-fixes-and-manual-polling.md](file:///Users/gpilla/Workspace/betrusty/vytrosti/docs/memory/sessions/0007-auth-fixes-and-manual-polling.md) (2026-06-25)
   - Objective: Fix Neon Auth seeding issues, implement complex passwords, configure mandatory documentation rules, and support manual payment verification.
+* [0008-user-owner-tenant-admin.md](file:///Users/gpilla/Workspace/betrusty/vytrosti/docs/memory/sessions/0008-user-owner-tenant-admin.md) (2026-06-25)
+  - Objective: Fix Neon database migration connections, seed 20 properties with images, build user-host-guest admin panel, and enforce session memory checks.
+* [0009-vercel-turbopack-build-and-pnpm-migration.md](file:///Users/gpilla/Workspace/betrusty/vytrosti/docs/memory/sessions/0009-vercel-turbopack-build-and-pnpm-migration.md) (2026-06-25)
+  - Objective: Resolve Turbopack build errors in client.ts due to @next/env imports, implement loadenv config utility, and transition tooling/docs to pnpm.
+
