@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vitrosti Backoffice | Listings & Ledger</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.cdnfonts.com/css/geist" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar for premium feel */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #bfc9c3;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #707974;
+        }
+        
+        .triple-shadow {
+            box-shadow: 
+                0 0 0 1px rgba(0,0,0,0.05),
+                0 2px 4px rgba(0,0,0,0.05),
+                0 10px 20px rgba(0,0,0,0.03);
+        }
+
+        .glass-header {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        
+        @keyframes subtle-float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-2px); }
+            100% { transform: translateY(0px); }
+        }
+        .hover-float:hover {
+            animation: subtle-float 2s ease-in-out infinite;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "inverse-surface": "#283044",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#35455a",
+                        "on-surface": "#131b2e",
+                        "surface-bright": "#faf8ff",
+                        "primary-fixed": "#b0f0d6",
+                        "primary-fixed-dim": "#95d3ba",
+                        "secondary-container": "#e0e3e5",
+                        "on-tertiary-fixed-variant": "#38485d",
+                        "on-tertiary-container": "#a2b2cb",
+                        "primary-container": "#064e3b",
+                        "inverse-primary": "#95d3ba",
+                        "on-secondary-container": "#626567",
+                        "on-tertiary-fixed": "#0b1c30",
+                        "tertiary-fixed": "#d3e4fe",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#2b6954",
+                        "on-background": "#131b2e",
+                        "on-primary-fixed-variant": "#0b513d",
+                        "on-tertiary": "#ffffff",
+                        "primary": "#003527",
+                        "surface-variant": "#dae2fd",
+                        "secondary": "#5c5f61",
+                        "tertiary-fixed-dim": "#b7c8e1",
+                        "on-primary-container": "#80bea6",
+                        "surface-container-highest": "#dae2fd",
+                        "background": "#faf8ff",
+                        "on-secondary-fixed-variant": "#444749",
+                        "surface-container-high": "#e2e7ff",
+                        "surface": "#faf8ff",
+                        "inverse-on-surface": "#eef0ff",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#404944",
+                        "outline": "#707974",
+                        "surface-dim": "#d2d9f4",
+                        "secondary-fixed": "#e0e3e5",
+                        "surface-container": "#eaedff",
+                        "surface-container-low": "#f2f3ff",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#1f2f43",
+                        "on-primary-fixed": "#002117",
+                        "secondary-fixed-dim": "#c4c7c9",
+                        "outline-variant": "#bfc9c3",
+                        "on-secondary-fixed": "#191c1e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "unit": "4px",
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "section-gap": "80px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["Geist"],
+                        "display-lg-mobile": ["Geist"],
+                        "body-sm": ["Geist"],
+                        "display-lg": ["Geist"],
+                        "body-base": ["Geist"],
+                        "headline-md": ["Geist"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "display-lg-mobile": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "letterSpacing": "0em", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "600"}],
+                        "body-base": ["16px", {"lineHeight": "1.6", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.02em", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-base antialiased">
+<!-- SideNavBar Anchor -->
+<aside class="h-screen w-64 fixed left-0 top-0 z-40 bg-surface-container-low border-r border-outline-variant/20 flex flex-col py-6 px-4 space-y-2">
+<div class="mb-10 px-2">
+<h1 class="font-display-lg text-headline-md text-primary tracking-tight">Vitrosti</h1>
+<p class="font-label-caps text-[10px] text-on-surface-variant tracking-widest uppercase mt-1">Backoffice</p>
+</div>
+<div class="flex-1 flex flex-col space-y-1">
+<!-- Navigation Items Mapping -->
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:translate-x-1 transition-all duration-200 cursor-pointer active:opacity-80 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="dashboard">dashboard</span>
+<span class="font-label-caps text-label-caps">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 bg-primary-container text-on-primary-container rounded-lg font-bold transition-all duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="home_work">home_work</span>
+<span class="font-label-caps text-label-caps">Listings</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-variant/50 hover:translate-x-1 transition-all duration-200 cursor-pointer active:opacity-80 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="calendar_today">calendar_today</span>
+<span class="font-label-caps text-label-caps">Bookings</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-variant/50 hover:translate-x-1 transition-all duration-200 cursor-pointer active:opacity-80 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span class="font-label-caps text-label-caps">Wallet Pool</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-variant/50 hover:translate-x-1 transition-all duration-200 cursor-pointer active:opacity-80 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="receipt_long">receipt_long</span>
+<span class="font-label-caps text-label-caps">Ledger</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-variant/50 hover:translate-x-1 transition-all duration-200 cursor-pointer active:opacity-80 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="enhanced_encryption">enhanced_encryption</span>
+<span class="font-label-caps text-label-caps">Escrows</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-variant/50 hover:translate-x-1 transition-all duration-200 cursor-pointer active:opacity-80 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="gavel">gavel</span>
+<span class="font-label-caps text-label-caps">Disputes</span>
+</a>
+</div>
+<div class="mt-auto pt-6 border-t border-outline-variant/10 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-variant/50 hover:translate-x-1 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+<span class="font-label-caps text-label-caps">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-variant/50 hover:translate-x-1 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="help_outline">help_outline</span>
+<span class="font-label-caps text-label-caps">Support</span>
+</a>
+<div class="mt-4 flex items-center gap-3 px-2">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant/30">
+<img class="w-full h-full object-cover" data-alt="A professional portrait of a property manager for a luxury estate firm, looking directly at the camera with a confident and warm smile. He is dressed in a crisp white shirt and navy blazer. The background is a soft-focus, high-end modern office with glass partitions and subtle green plants, maintaining a bright, clean, light-mode aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbkRgzvznTRX-t1RFo_wAbJDLKLfQ0E6bNl6ypPSW5I49M901b4sq4oPJO72hwnI_tQkTEVO2feFi2GF8dpnzfqMgRODXahZMXV-UdojhN9yPyEW_pB6N92oiGDGA9ST2Re-dmK8cxfs7gn3wdxIB2Odwtvgygo-umGGrHigqyZFI8mmHcEzsbOXrfVtWCJAO37LS2HST6aYLU7DZ8WaxZSzcgfNwkUhEJDgJLMKPzr7CZMyBqDOV3rPrbuliiHTU-Gww0pZ1Ly2U"/>
+</div>
+<div class="flex flex-col">
+<span class="font-label-caps text-[12px] text-on-surface font-bold">Verified Host</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant">backoffice@vitrosti.io</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-64 min-h-screen">
+<!-- Header -->
+<header class="h-20 px-gutter flex justify-between items-center glass-header border-b border-outline-variant/10 sticky top-0 bg-surface/80 z-30">
+<div>
+<h2 class="font-headline-md text-headline-md text-primary">Listings & Ledger</h2>
+<p class="font-body-sm text-on-surface-variant">Real-time status of protocol-managed estates</p>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 px-4 py-2 border border-outline rounded-lg font-label-caps text-label-caps text-on-surface-variant hover:bg-surface-variant/20 transition-all active:scale-95">
+<span class="material-symbols-outlined text-[18px]" data-icon="download">download</span>
+                    Export Ledger
+                </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary-container text-on-primary-container rounded-lg font-label-caps text-label-caps shadow-sm hover:opacity-90 transition-all active:scale-95">
+<span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
+                    New Listing
+                </button>
+</div>
+</header>
+<!-- Content Body -->
+<div class="p-gutter max-w-container-max mx-auto space-y-section-gap pb-section-gap">
+<!-- Statistics Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap-gutter">
+<div class="bg-surface-container-lowest p-6 rounded-xl triple-shadow border border-outline-variant/20">
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-2">Total Revenue</p>
+<h3 class="font-display-lg text-headline-md text-primary">$1,429,203.50</h3>
+<p class="font-body-sm text-primary-container mt-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="trending_up">trending_up</span>
+                        +12.4% this month
+                    </p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl triple-shadow border border-outline-variant/20">
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-2">Active Listings</p>
+<h3 class="font-display-lg text-headline-md text-primary">84</h3>
+<p class="font-body-sm text-on-surface-variant mt-2">12 pending verification</p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl triple-shadow border border-outline-variant/20">
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-2">Pool Liquidity</p>
+<h3 class="font-display-lg text-headline-md text-primary">850k USDT</h3>
+<p class="font-body-sm text-error mt-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="warning">warning</span>
+                        Below 1M threshold
+                    </p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl triple-shadow border border-outline-variant/20">
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-2">Escrow Safety</p>
+<h3 class="font-display-lg text-headline-md text-primary">99.98%</h3>
+<p class="font-body-sm text-on-surface-variant mt-2">Audited 2 days ago</p>
+</div>
+</section>
+<!-- Table View: Properties -->
+<section>
+<div class="flex justify-between items-end mb-6">
+<h4 class="font-headline-md text-headline-md text-primary">Property Inventory</h4>
+<div class="flex gap-2">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container rounded-lg border-none focus:ring-1 focus:ring-primary text-body-sm w-64" placeholder="Filter estates..." type="text"/>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl triple-shadow overflow-hidden border border-outline-variant/20">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant/10 bg-surface-container-low/30">
+<th class="p-4 font-label-caps text-label-caps text-on-surface-variant">Estate Title</th>
+<th class="p-4 font-label-caps text-label-caps text-on-surface-variant">Managing Host</th>
+<th class="p-4 font-label-caps text-label-caps text-on-surface-variant">Status</th>
+<th class="p-4 font-label-caps text-label-caps text-on-surface-variant text-right">Yield (24h)</th>
+<th class="p-4 font-label-caps text-label-caps text-on-surface-variant text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<!-- Listing 1 -->
+<tr class="hover:bg-surface-container-low/20 transition-colors">
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A hyper-realistic architectural photograph of a minimalist brutalist villa in the Swiss Alps. The structure features clean concrete lines, expansive floor-to-ceiling glass windows, and a warm interior glow. Soft morning light hits the facade, creating sharp, sophisticated shadows. The atmosphere is quiet, luxurious, and technologically advanced." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzKhCfjznYifrG__tYD6EjHPjvJBBwfgiX3W9J96zOWoCFPl0iR274jmfLXl_f4-ksCfHQgGyHKQlyERp3Zv0FAVSomnUR56b7KGaN-FzuW9WbF6NQddKz1NykaI8S0J8cau28DPB5DuGcLuyZ0JfLAiJ4CpZsTNuxt5nQtesKmiagGvRdDNcPmh14aSRtA-tDbJNjgD832VOJtKOAUM6PoLgk7f5AmisMxTFWs0vdJ8YrB1_VdYfYAvPu0DpbfRlKkxtGYlCssx0"/>
+</div>
+<div>
+<p class="font-body-base text-on-surface font-medium">Alpine Brutalist Villa</p>
+<p class="font-body-sm text-on-surface-variant text-[12px]">St. Moritz, CH</p>
+</div>
+</div>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-primary-fixed"></div>
+<span class="text-body-sm">Elena Valerius</span>
+</div>
+</td>
+<td class="p-4">
+<span class="px-2 py-1 bg-primary-fixed/30 text-on-primary-fixed-variant rounded-full text-[11px] font-bold uppercase tracking-wider">Live</span>
+</td>
+<td class="p-4 text-right">
+<span class="font-mono text-body-sm text-primary font-semibold">$1,240.00</span>
+</td>
+<td class="p-4 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Listing 2 -->
+<tr class="hover:bg-surface-container-low/20 transition-colors">
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A wide-angle landscape shot of a sustainable coastal eco-retreat in Tulum. The design uses light-colored natural stone and weathered wood. Turquoise ocean waters are visible in the background under a clear, high-key sky. The aesthetic is organic yet mathematically precise, embodying modern luxury through natural materials." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrSai2AqbUYUX5Kdpgv8A-0KJx4rS2qlMX4Gy--JM58gYblmklCffemJuKuACCZXV46zNQ4pW7lsWouVKdk1chQYTnfbxk0mIgtpu8uixrpDJ80GezcLkZY-wg5ZIr0mH-koqTQTfPrfCjCUeNXpKhQ2RB34gX4PvlmFo9oJZNaTHSXdXmnsaEZkBQ8PA79HnNglvAZgNi7eeZc7jgidbnSeXORefYMiIGNISiRLQPwQ8XzX_AgIX8tinkjWny4CPiPNJtHvMRO9A"/>
+</div>
+<div>
+<p class="font-body-base text-on-surface font-medium">Tulum Eco-Sanctuary</p>
+<p class="font-body-sm text-on-surface-variant text-[12px]">Quintana Roo, MX</p>
+</div>
+</div>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-secondary-fixed"></div>
+<span class="text-body-sm">Marco Delgado</span>
+</div>
+</td>
+<td class="p-4">
+<span class="px-2 py-1 bg-surface-variant text-on-surface-variant rounded-full text-[11px] font-bold uppercase tracking-wider">Pending</span>
+</td>
+<td class="p-4 text-right">
+<span class="font-mono text-body-sm text-on-surface-variant">$0.00</span>
+</td>
+<td class="p-4 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Listing 3 -->
+<tr class="hover:bg-surface-container-low/20 transition-colors">
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="An interior shot of a high-tech glass penthouse overlooking a neon-lit Tokyo skyline at twilight. The room features dark, reflective surfaces, sharp architectural edges, and subtle blue accent lighting. The mood is futuristic and prestigious, suggesting a premium rental for digital nomads and tech elites." src="https://lh3.googleusercontent.com/aida-public/AB6AXuASV_zDxGFjwFk8jMFk8FbLUQWw-rSlHghf46SNRmamWmmLSBzUz9INNeFw7Ku7qV9XPdaqyx4y8UJnc4nSBT7g5vEjvAFJWCXIQlIZPPTRPshM302H2rr4N2hMgVJez5GoMD7cz1tRaPCz06VBtcTKi1yG2rrlmHJXsg5SBsD5IZ-l1uhvQRmquSACIgDiWbLUsDqQS5CU7h0rFCGIkOQrMpvgLkKVKDfunatmg4emYK093p7F7uT9Ug3drKHNIwDYZN3c-CC5CD8"/>
+</div>
+<div>
+<p class="font-body-base text-on-surface font-medium">Tokyo Glass Tower</p>
+<p class="font-body-sm text-on-surface-variant text-[12px]">Minato City, JP</p>
+</div>
+</div>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-primary-fixed"></div>
+<span class="text-body-sm">Akira Sato</span>
+</div>
+</td>
+<td class="p-4">
+<span class="px-2 py-1 bg-primary-fixed/30 text-on-primary-fixed-variant rounded-full text-[11px] font-bold uppercase tracking-wider">Live</span>
+</td>
+<td class="p-4 text-right">
+<span class="font-mono text-body-sm text-primary font-semibold">$3,410.50</span>
+</td>
+<td class="p-4 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Listing 4 -->
+<tr class="hover:bg-surface-container-low/20 transition-colors">
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A vintage luxury loft in Manhattan featuring exposed brick, soaring ceilings, and large industrial windows. The furniture is mid-century modern with rich leather and wood textures. The lighting is warm and inviting, contrasted by the cool, gray New York morning light streaming through the windows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAk8v7NXrKIEAT98ZyCAXOZszQRRFzHRpp0PbIPBMZlYfWNpBOOxd9Cdfs1RChW4jMH_2h1L15ZHegkOjl-chyWqJj1Pfc7eqDI8v1u4sA0MFoAjOGqmLou1ceb8-IZGkVmyuV3Yk-qvpOCjiW69yEzhWsuaf9t8qSFiEJLvXL7o-SR5OeKYR3L3dpTK_KmVjJR8A4XlozCLZtwlXieCLYbsuvdEaOTCBvtGnZT3eibubchrPxfQI2WyCj19eHmV5H-6L_N7jukRkg"/>
+</div>
+<div>
+<p class="font-body-base text-on-surface font-medium">SoHo Heritage Loft</p>
+<p class="font-body-sm text-on-surface-variant text-[12px]">New York, US</p>
+</div>
+</div>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-error-container"></div>
+<span class="text-body-sm">Jordan Smith</span>
+</div>
+</td>
+<td class="p-4">
+<span class="px-2 py-1 bg-error-container text-on-error-container rounded-full text-[11px] font-bold uppercase tracking-wider">Blocked</span>
+</td>
+<td class="p-4 text-right">
+<span class="font-mono text-body-sm text-error">-$250.00</span>
+</td>
+<td class="p-4 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="p-4 bg-surface-container-low/30 border-t border-outline-variant/10 flex items-center justify-between">
+<span class="text-body-sm text-on-surface-variant">Showing 4 of 84 properties</span>
+<div class="flex gap-2">
+<button class="p-1 hover:bg-surface-variant/50 rounded"><span class="material-symbols-outlined text-[18px]" data-icon="chevron_left">chevron_left</span></button>
+<button class="p-1 hover:bg-surface-variant/50 rounded"><span class="material-symbols-outlined text-[18px]" data-icon="chevron_right">chevron_right</span></button>
+</div>
+</div>
+</div>
+</section>
+<!-- Ledger Section -->
+<section>
+<div class="flex justify-between items-center mb-6">
+<div>
+<h4 class="font-headline-md text-headline-md text-primary">Protocol Ledger</h4>
+<p class="font-body-sm text-on-surface-variant">Cryptographic settlement history on Stellar Network</p>
+</div>
+<div class="flex items-center gap-4 bg-surface-container-low p-2 rounded-lg border border-outline-variant/20">
+<div class="text-right pr-4 border-r border-outline-variant/20">
+<p class="font-label-caps text-[10px] text-on-surface-variant">Current Balance</p>
+<p class="font-mono text-body-base text-primary font-bold">428,502.21 USDC</p>
+</div>
+<div class="pl-2">
+<span class="material-symbols-outlined text-primary-container" data-icon="shield_check">shield_lock</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl triple-shadow overflow-hidden border border-outline-variant/20">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-primary/5">
+<th class="p-4 font-label-caps text-label-caps text-on-surface-variant">Timestamp</th>
+<th class="p-4 font-label-caps text-label-caps text-on-surface-variant">Stellar TX Hash</th>
+<th class="p-4 font-label-caps text-label-caps text-on-surface-variant">Type</th>
+<th class="p-4 font-label-caps text-label-caps text-on-surface-variant text-right">Debit</th>
+<th class="p-4 font-label-caps text-label-caps text-on-surface-variant text-right">Credit</th>
+<th class="p-4 font-label-caps text-label-caps text-on-surface-variant text-right">Balance</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="group hover:bg-surface-variant/10">
+<td class="p-4 text-body-sm whitespace-nowrap">2024-05-12 14:02:11</td>
+<td class="p-4">
+<div class="flex items-center gap-2 group">
+<span class="font-mono text-[12px] text-on-tertiary-fixed-variant">GC7F...X82L</span>
+<span class="material-symbols-outlined text-[14px] opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" data-icon="content_copy">content_copy</span>
+</div>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="text-body-sm">Booking Settlement</span>
+</div>
+</td>
+<td class="p-4 text-right text-body-sm font-mono">—</td>
+<td class="p-4 text-right text-body-sm font-mono text-primary font-bold">+1,200.00</td>
+<td class="p-4 text-right text-body-sm font-mono">428,502.21</td>
+</tr>
+<tr class="group hover:bg-surface-variant/10">
+<td class="p-4 text-body-sm">2024-05-12 11:45:03</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<span class="font-mono text-[12px] text-on-tertiary-fixed-variant">GA9K...P91Q</span>
+<span class="material-symbols-outlined text-[14px] opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" data-icon="content_copy">content_copy</span>
+</div>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="text-body-sm">Host Payout</span>
+</div>
+</td>
+<td class="p-4 text-right text-body-sm font-mono text-error">-4,500.00</td>
+<td class="p-4 text-right text-body-sm font-mono">—</td>
+<td class="p-4 text-right text-body-sm font-mono">427,302.21</td>
+</tr>
+<tr class="group hover:bg-surface-variant/10">
+<td class="p-4 text-body-sm">2024-05-11 23:12:44</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<span class="font-mono text-[12px] text-on-tertiary-fixed-variant">GB2M...Z00A</span>
+<span class="material-symbols-outlined text-[14px] opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" data-icon="content_copy">content_copy</span>
+</div>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="text-body-sm">Booking Settlement</span>
+</div>
+</td>
+<td class="p-4 text-right text-body-sm font-mono">—</td>
+<td class="p-4 text-right text-body-sm font-mono text-primary font-bold">+850.50</td>
+<td class="p-4 text-right text-body-sm font-mono">431,802.21</td>
+</tr>
+<tr class="group hover:bg-surface-variant/10">
+<td class="p-4 text-body-sm">2024-05-11 18:05:19</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<span class="font-mono text-[12px] text-on-tertiary-fixed-variant">GC4R...H22V</span>
+<span class="material-symbols-outlined text-[14px] opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" data-icon="content_copy">content_copy</span>
+</div>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span class="text-body-sm">Refund Issued</span>
+</div>
+</td>
+<td class="p-4 text-right text-body-sm font-mono text-error">-150.00</td>
+<td class="p-4 text-right text-body-sm font-mono">—</td>
+<td class="p-4 text-right text-body-sm font-mono">430,951.71</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</div>
+<!-- Footer -->
+<footer class="w-full py-section-gap bg-surface-container-highest border-t border-outline-variant/50">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter max-w-container-max mx-auto px-gutter">
+<div class="col-span-1 md:col-span-2">
+<h5 class="font-display-lg text-headline-md text-primary mb-4">Vitrosti Protocol</h5>
+<p class="font-body-sm text-on-surface-variant max-w-xs">Built for Digital Permanence. A high-end vacation rental platform secured by stablecoin protocol and verified on-chain assets.</p>
+<p class="font-body-sm text-on-surface-variant mt-8">© 2024 Vitrosti Protocol. Built for Digital Permanence.</p>
+</div>
+<div>
+<h6 class="font-label-caps text-label-caps text-primary mb-4">Legal & Compliance</h6>
+<ul class="space-y-2">
+<li><a class="font-body-sm text-on-surface-variant hover:underline decoration-primary transition-opacity opacity-80 hover:opacity-100" href="#">Privacy Policy</a></li>
+<li><a class="font-body-sm text-on-surface-variant hover:underline decoration-primary transition-opacity opacity-80 hover:opacity-100" href="#">Terms of Service</a></li>
+<li><a class="font-body-sm text-on-surface-variant hover:underline decoration-primary transition-opacity opacity-80 hover:opacity-100" href="#">Escrow Rules</a></li>
+</ul>
+</div>
+<div>
+<h6 class="font-label-caps text-label-caps text-primary mb-4">Support</h6>
+<ul class="space-y-2">
+<li><a class="font-body-sm text-on-surface-variant hover:underline decoration-primary transition-opacity opacity-80 hover:opacity-100" href="#">Security Audit</a></li>
+<li><a class="font-body-sm text-on-surface-variant hover:underline decoration-primary transition-opacity opacity-80 hover:opacity-100" href="#">USDT Support</a></li>
+<li><a class="font-body-sm text-on-surface-variant hover:underline decoration-primary transition-opacity opacity-80 hover:opacity-100" href="#">API Docs</a></li>
+</ul>
+</div>
+</div>
+</footer>
+</main>
+<!-- Floating Micro-Interaction Scripts -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Subtle entry animations
+            const sections = document.querySelectorAll('section');
+            sections.forEach((s, idx) => {
+                s.style.opacity = '0';
+                s.style.transform = 'translateY(10px)';
+                s.style.transition = `all 0.6s ease-out ${idx * 0.1}s`;
+                setTimeout(() => {
+                    s.style.opacity = '1';
+                    s.style.transform = 'translateY(0)';
+                }, 100);
+            });
+
+            // Active Tab UI update logic (Client-side simulation)
+            const navLinks = document.querySelectorAll('aside a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    navLinks.forEach(l => {
+                        l.classList.remove('bg-primary-container', 'text-on-primary-container', 'font-bold');
+                        l.classList.add('text-on-surface-variant');
+                    });
+                    link.classList.add('bg-primary-container', 'text-on-primary-container', 'font-bold');
+                    link.classList.remove('text-on-surface-variant');
+                });
+            });
+        });
+    </script>
+</body></html>

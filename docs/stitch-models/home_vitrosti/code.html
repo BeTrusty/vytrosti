@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vitrosti | Premium Stablecoin Rentals</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(191, 201, 195, 0.3);
+        }
+        .ambient-lift {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .ambient-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 20px 25px -5px rgba(0, 0, 0, 0.03);
+        }
+        /* Hide scrollbar for category list */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "inverse-surface": "#283044",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#35455a",
+                        "on-surface": "#131b2e",
+                        "surface-bright": "#faf8ff",
+                        "primary-fixed": "#b0f0d6",
+                        "primary-fixed-dim": "#95d3ba",
+                        "secondary-container": "#e0e3e5",
+                        "on-tertiary-fixed-variant": "#38485d",
+                        "on-tertiary-container": "#a2b2cb",
+                        "primary-container": "#064e3b",
+                        "inverse-primary": "#95d3ba",
+                        "on-secondary-container": "#626567",
+                        "on-tertiary-fixed": "#0b1c30",
+                        "tertiary-fixed": "#d3e4fe",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#2b6954",
+                        "on-background": "#131b2e",
+                        "on-primary-fixed-variant": "#0b513d",
+                        "on-tertiary": "#ffffff",
+                        "primary": "#003527",
+                        "surface-variant": "#dae2fd",
+                        "secondary": "#5c5f61",
+                        "tertiary-fixed-dim": "#b7c8e1",
+                        "on-primary-container": "#80bea6",
+                        "surface-container-highest": "#dae2fd",
+                        "background": "#faf8ff",
+                        "on-secondary-fixed-variant": "#444749",
+                        "surface-container-high": "#e2e7ff",
+                        "surface": "#faf8ff",
+                        "inverse-on-surface": "#eef0ff",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#404944",
+                        "outline": "#707974",
+                        "surface-dim": "#d2d9f4",
+                        "secondary-fixed": "#e0e3e5",
+                        "surface-container": "#eaedff",
+                        "surface-container-low": "#f2f3ff",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#1f2f43",
+                        "on-primary-fixed": "#002117",
+                        "secondary-fixed-dim": "#c4c7c9",
+                        "outline-variant": "#bfc9c3",
+                        "on-secondary-fixed": "#191c1e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "unit": "4px",
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "section-gap": "80px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["Geist"],
+                        "display-lg-mobile": ["Geist"],
+                        "body-sm": ["Geist"],
+                        "display-lg": ["Geist"],
+                        "body-base": ["Geist"],
+                        "headline-md": ["Geist"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "display-lg-mobile": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "letterSpacing": "0em", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "600"}],
+                        "body-base": ["16px", {"lineHeight": "1.6", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.02em", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface font-body-base overflow-x-hidden">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface-container-lowest/80 backdrop-blur-md border-b border-outline-variant/30 shadow-sm">
+<nav class="flex justify-between items-center h-20 px-gutter w-full max-w-container-max mx-auto">
+<div class="flex items-center gap-8">
+<a class="font-display-lg text-headline-md tracking-tight text-primary dark:text-primary-fixed" href="/">Vitrosti</a>
+<div class="hidden md:flex gap-6">
+<a class="text-primary dark:text-primary-fixed font-semibold border-b-2 border-primary pb-1 font-body-base text-body-base transition-colors" href="#">Destinations</a>
+<a class="text-on-surface-variant dark:text-on-secondary-container hover:text-primary transition-colors font-body-base text-body-base" href="#">Experiences</a>
+<a class="text-on-surface-variant dark:text-on-secondary-container hover:text-primary transition-colors font-body-base text-body-base" href="#">Hosting</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">language</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">notifications</button>
+<button class="bg-primary-container text-on-primary-container px-6 py-2.5 rounded-full font-label-caps text-label-caps active:scale-95 transition-transform duration-200">Connect Wallet</button>
+</div>
+</nav>
+</header>
+<main class="pt-20">
+<!-- Hero Section -->
+<section class="relative h-[870px] flex items-center justify-center overflow-hidden">
+<div class="absolute inset-0 z-0" data-alt="A cinematic, wide-angle photograph of a breathtaking modernist villa perched on a Mediterranean cliffside at sunset. The architectural lines are sharp and clean, illuminated by warm, golden-hour light that contrasts with the deep emerald and azure tones of the sea below. The overall aesthetic is one of quiet, high-end luxury and technological precision, mirroring the brand's stability and digital permanence theme." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA9tK6KovbOktCZa2_fkuKNGrCmZ3SVzBtSAHOOdEpQhiOqGzWQ8Lsuym08FSusKfoVNECRyYrnMhUR05hX7VIBKzUCLaoz8Od3ehE1bncRP34EPc12sEUq33VpalL-vCQ5cjrzw503_AP2_IR1G7-I0fllEWh6_rYxBts4oUIltzdZxoOajAeviClnbhtyRfK3MneU1GY3ioYpojYu6pacXDA71xe2CKcy5vyNrZEWdnJBsE_u770q27Ix6DDUF4o4_0BubLHKslY')"></div>
+<div class="absolute inset-0 bg-gradient-to-b from-surface/20 to-surface/90 z-10"></div>
+<div class="relative z-20 text-center max-w-4xl px-gutter">
+<h1 class="font-display-lg text-display-lg mb-6 text-primary">Travel beyond borders,<br/>pay with stability.</h1>
+<p class="font-body-base text-headline-md text-on-surface-variant mb-12 max-w-2xl mx-auto">Luxury vacation rentals secured by the Vitrosti Protocol. The world's first stablecoin-native travel ecosystem.</p>
+<!-- Search Bar -->
+<div class="glass-card p-2 rounded-full shadow-lg flex flex-col md:flex-row items-center gap-2 max-w-3xl mx-auto border-outline-variant/30">
+<div class="flex-1 w-full px-6 py-3 text-left border-r border-outline-variant/20">
+<label class="block font-label-caps text-[10px] text-outline uppercase tracking-widest">Where</label>
+<input class="w-full bg-transparent border-none focus:ring-0 p-0 text-on-surface placeholder:text-outline/50 font-medium" placeholder="Search destinations" type="text"/>
+</div>
+<div class="flex-1 w-full px-6 py-3 text-left border-r border-outline-variant/20">
+<label class="block font-label-caps text-[10px] text-outline uppercase tracking-widest">When</label>
+<input class="w-full bg-transparent border-none focus:ring-0 p-0 text-on-surface placeholder:text-outline/50 font-medium" placeholder="Add dates" type="text"/>
+</div>
+<div class="flex-1 w-full px-6 py-3 text-left">
+<label class="block font-label-caps text-[10px] text-outline uppercase tracking-widest">Guests</label>
+<input class="w-full bg-transparent border-none focus:ring-0 p-0 text-on-surface placeholder:text-outline/50 font-medium" placeholder="Add guests" type="text"/>
+</div>
+<button class="bg-primary text-white p-4 rounded-full flex items-center justify-center hover:bg-primary-container transition-colors group">
+<span class="material-symbols-outlined">search</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Categories & Featured Section -->
+<section class="py-section-gap px-gutter max-w-container-max mx-auto">
+<!-- Category Tabs -->
+<div class="flex gap-10 mb-12 overflow-x-auto no-scrollbar pb-4 items-center justify-start md:justify-center">
+<button class="flex flex-col items-center gap-2 group transition-all shrink-0">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">beach_access</span>
+<span class="font-label-caps text-label-caps text-primary border-b-2 border-primary pb-1">Beach</span>
+</button>
+<button class="flex flex-col items-center gap-2 group transition-all shrink-0 opacity-60 hover:opacity-100">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:scale-110 transition-transform">cabin</span>
+<span class="font-label-caps text-label-caps">Cabins</span>
+</button>
+<button class="flex flex-col items-center gap-2 group transition-all shrink-0 opacity-60 hover:opacity-100">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:scale-110 transition-transform">apartment</span>
+<span class="font-label-caps text-label-caps">Modern</span>
+</button>
+<button class="flex flex-col items-center gap-2 group transition-all shrink-0 opacity-60 hover:opacity-100">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:scale-110 transition-transform">domain</span>
+<span class="font-label-caps text-label-caps">Penthouse</span>
+</button>
+</div>
+<div class="flex justify-between items-end mb-10">
+<div>
+<h2 class="font-display-lg text-headline-md text-primary mb-2">Curated Escapes</h2>
+<p class="text-on-surface-variant">Global destinations for the digital nomad and the discerning traveler.</p>
+</div>
+<button class="text-primary font-label-caps text-label-caps flex items-center gap-2 group">
+                    View all listings 
+                    <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+<!-- Bento Grid Listings -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Property Card 1 -->
+<div class="group cursor-pointer">
+<div class="relative aspect-[4/5] rounded-xl overflow-hidden mb-4 border border-outline-variant/30">
+<div class="absolute inset-0 bg-cover bg-center ambient-lift group-hover:scale-105" data-alt="A high-end architectural photo of a minimalist brutalist villa in Bali, surrounded by lush tropical greenery and a mirror-like infinity pool. The structure uses raw concrete and warm wood accents, glowing under soft dusk lighting. The image captures a sense of privacy and ultra-modern digital luxury in a light-mode aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD1J6--QNrlhnB_szWj6qa3WZ943enBnTFjjhRzTZhrAj-40KQNoBliTQ74tNzBJJh5g4qUOt2Ba8Z2uYx4y52-sVR6KNPvM4FGQf09Drqg2crta0Fb9UIvl5jeIjs8RAv3bSHLgmnWWBLqwEoFFbjY-jHnvZw0lF3L2F3ylUc4TjvQrqTCYT9C1p9RsiJkZ4U8sNZTJRFDTRZPEVKKxZxOhjF3GcMldjIeAcAB88UGK4HszZu9Q4XS0X05e8D4DacEdcqWeuGBHF4')"></div>
+<button class="absolute top-4 right-4 bg-white/20 backdrop-blur-md p-2 rounded-full hover:bg-white/40 transition-colors">
+<span class="material-symbols-outlined text-white text-[20px]">favorite</span>
+</button>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-headline-md text-body-base font-bold text-on-surface">Uluwatu Sanctuary</h3>
+<p class="text-on-surface-variant text-body-sm">Bali, Indonesia</p>
+</div>
+<div class="text-right">
+<span class="font-display-lg text-body-base font-bold text-primary">450 USDT</span>
+<p class="text-on-surface-variant text-[10px] font-label-caps">PER NIGHT</p>
+</div>
+</div>
+</div>
+<!-- Property Card 2 -->
+<div class="group cursor-pointer">
+<div class="relative aspect-[4/5] rounded-xl overflow-hidden mb-4 border border-outline-variant/30">
+<div class="absolute inset-0 bg-cover bg-center ambient-lift group-hover:scale-105" data-alt="A stunning modern glass penthouse overlooking the Tokyo skyline at night. The interior is a masterclass in minimalism with deep emerald velvet seating and high-contrast lighting. Neon city lights reflect off large floor-to-ceiling windows, emphasizing global access and urban sophistication." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD26q1I6eDHJdn3A29FImvXXkRp7dSvMyinFVDkZA8KOsSiBuJTBEFX4o4NUfnKghmeisI8D1T_K9M1NLbPAG6uS7UwFT1BbiHVhke2xAGa5qwOXWTlcNHSzd5FeO8jMgPMkFe5rBg7jUuq2dy3bM3fBQdEKAeFJ2yXx27pE7X1Bvwm_66XVqWx_TPUMc6QaG_ajUVexM4whuXowN_virjuziXBWUZMya6jxNvld2HBLTD4IyuGPBwm02u3R50yA_UFbDtW_sr-H-o')"></div>
+<button class="absolute top-4 right-4 bg-white/20 backdrop-blur-md p-2 rounded-full hover:bg-white/40 transition-colors">
+<span class="material-symbols-outlined text-white text-[20px]">favorite</span>
+</button>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-headline-md text-body-base font-bold text-on-surface">Neo-Tokyo Loft</h3>
+<p class="text-on-surface-variant text-body-sm">Shibuya, Japan</p>
+</div>
+<div class="text-right">
+<span class="font-display-lg text-body-base font-bold text-primary">820 USDT</span>
+<p class="text-on-surface-variant text-[10px] font-label-caps">PER NIGHT</p>
+</div>
+</div>
+</div>
+<!-- Property Card 3 -->
+<div class="group cursor-pointer">
+<div class="relative aspect-[4/5] rounded-xl overflow-hidden mb-4 border border-outline-variant/30">
+<div class="absolute inset-0 bg-cover bg-center ambient-lift group-hover:scale-105" data-alt="An ultra-modern A-frame cabin situated in the Swiss Alps, surrounded by snow-covered pines. The design features massive glass walls and a warm interior glow against the cool blue evening tones. The scene conveys security and high-end solitude in a pristine, stable environment." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDNvRrZY2es7Eo2DcokjWumyDzSMCMOPm5S5UuIu8tMSpdAd5WW28SkzTVf5fuatKwTUdAPDyWvIuJI6bbHMpP_DqziXNmEX3Hh7Xl9BgOdXRIM9-1Ts1BHxq8TBsDK7YcjS4UjUv16QBLkhv9H5Jyi3dlmOxXb05pUovpqFUc_9LWf8jn0AmO0LVoDaz4NDA1HUMz31YEbaH0E9YKMPA_xQI2LZM2hwL0pBZehQZOrKbVgTjS1p9VTQ7Orhnbano7idDVjptMBsS0')"></div>
+<button class="absolute top-4 right-4 bg-white/20 backdrop-blur-md p-2 rounded-full hover:bg-white/40 transition-colors">
+<span class="material-symbols-outlined text-white text-[20px]">favorite</span>
+</button>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-headline-md text-body-base font-bold text-on-surface">Alpina Peak Cabin</h3>
+<p class="text-on-surface-variant text-body-sm">Zermatt, Switzerland</p>
+</div>
+<div class="text-right">
+<span class="font-display-lg text-body-base font-bold text-primary">690 USDT</span>
+<p class="text-on-surface-variant text-[10px] font-label-caps">PER NIGHT</p>
+</div>
+</div>
+</div>
+<!-- Property Card 4 -->
+<div class="group cursor-pointer">
+<div class="relative aspect-[4/5] rounded-xl overflow-hidden mb-4 border border-outline-variant/30">
+<div class="absolute inset-0 bg-cover bg-center ambient-lift group-hover:scale-105" data-alt="A luxurious coastal estate in the Amalfi Coast, Italy, built into the rocky cliffs. The architecture is a blend of traditional stone and modern white surfaces, featuring a private deck with deep emerald umbrellas. Soft morning light creates a clean, sophisticated atmosphere of digital permanence and physical beauty." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDOOen7KdWPh5EMix5sZzUwigPFnVCn-wUIpkwNoGgdiROBcUba7UawtYJ0Z0v4ewlPa1Aazne1_mb5jrPJ1hw9LfUyP-OmYYVqHHuJoT-prtNcfSyy0YiLvLSXv9EYavL2CS_8XBIW6wuZgUyalUdS7_9Hfcu3xHoudvY_RZRlzzm4X-fSA7Fpetaqo8MBs-4gh8M9N2gEoNx05b2edQImktTdj18rKPojHTWVoTTyazY7jfJU38l2E5IKGKfYeDRthZl8qPmwrhU')"></div>
+<button class="absolute top-4 right-4 bg-white/20 backdrop-blur-md p-2 rounded-full hover:bg-white/40 transition-colors">
+<span class="material-symbols-outlined text-white text-[20px]">favorite</span>
+</button>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-headline-md text-body-base font-bold text-on-surface">Azure Cliff Estate</h3>
+<p class="text-on-surface-variant text-body-sm">Positano, Italy</p>
+</div>
+<div class="text-right">
+<span class="font-display-lg text-body-base font-bold text-primary">1200 USDT</span>
+<p class="text-on-surface-variant text-[10px] font-label-caps">PER NIGHT</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- How it Works Section -->
+<section class="bg-surface-container-low py-section-gap relative overflow-hidden">
+<!-- Subtle background effect -->
+<div class="absolute top-0 right-0 w-1/3 h-full opacity-5 pointer-events-none">
+<span class="material-symbols-outlined text-[400px] text-primary select-none">shield_lock</span>
+</div>
+<div class="max-w-container-max mx-auto px-gutter relative z-10">
+<div class="text-center mb-16">
+<span class="font-label-caps text-label-caps text-primary tracking-widest uppercase mb-4 block">The Protocol</span>
+<h2 class="font-display-lg text-display-lg-mobile md:text-display-lg text-primary">Redefining Rental Trust</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+<div class="flex flex-col items-center text-center">
+<div class="w-16 h-16 rounded-2xl bg-primary-container flex items-center justify-center mb-6 shadow-lg">
+<span class="material-symbols-outlined text-on-primary-container text-[32px]">travel_explore</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-4">1. Select</h3>
+<p class="text-on-surface-variant font-body-base">Browse our hand-picked collection of premium global properties verified for quality and connectivity.</p>
+</div>
+<div class="flex flex-col items-center text-center">
+<div class="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center mb-6 shadow-lg">
+<span class="material-symbols-outlined text-white text-[32px]">account_balance_wallet</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-4">2. Pay with Stability</h3>
+<p class="text-on-surface-variant font-body-base">Eliminate FX fees. Book instantly using USDT, USDC, or DAI through your preferred digital wallet.</p>
+</div>
+<div class="flex flex-col items-center text-center">
+<div class="w-16 h-16 rounded-2xl bg-surface-tint flex items-center justify-center mb-6 shadow-lg">
+<span class="material-symbols-outlined text-white text-[32px]">verified_user</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-4">3. Protected Escrow</h3>
+<p class="text-on-surface-variant font-body-base">Funds are held in smart contract escrow until check-in. Your booking is mathematically guaranteed.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Benefits Grid -->
+<section class="py-section-gap px-gutter max-w-container-max mx-auto">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<div class="lg:col-span-4 flex flex-col justify-center">
+<h2 class="font-display-lg text-headline-md text-primary mb-6">Why Vitrosti?</h2>
+<p class="text-on-surface-variant mb-8 text-body-base leading-relaxed">We bridge the gap between institutional-grade blockchain security and the tactile luxury of a five-star vacation.</p>
+<div class="space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="font-label-caps text-label-caps text-on-surface">Zero Platform Fees for Early Adopters</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="font-label-caps text-label-caps text-on-surface">24/7 Concierge DAO Support</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="font-label-caps text-label-caps text-on-surface">Immutable Rental Agreements</span>
+</div>
+</div>
+</div>
+<div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="glass-card p-8 rounded-2xl border border-outline-variant/30 flex flex-col">
+<span class="material-symbols-outlined text-primary mb-6 text-[32px]">security</span>
+<h4 class="font-headline-md text-headline-md mb-2">Unrivaled Security</h4>
+<p class="text-on-surface-variant text-body-sm">Powered by the Ethereum and Solana networks, ensuring your booking and identity remain sovereign and safe from tampering.</p>
+</div>
+<div class="glass-card p-8 rounded-2xl border border-outline-variant/30 flex flex-col">
+<span class="material-symbols-outlined text-primary mb-6 text-[32px]">visibility</span>
+<h4 class="font-headline-md text-headline-md mb-2">Full Transparency</h4>
+<p class="text-on-surface-variant text-body-sm">Every review is on-chain. Every transaction is verifiable. No hidden cleaning fees or surprise currency conversions.</p>
+</div>
+<div class="glass-card p-8 rounded-2xl border border-outline-variant/30 flex flex-col">
+<span class="material-symbols-outlined text-primary mb-6 text-[32px]">public</span>
+<h4 class="font-headline-md text-headline-md mb-2">Global Access</h4>
+<p class="text-on-surface-variant text-body-sm">Book high-end estates in over 40 countries without needing a local bank account or credit card. True financial freedom.</p>
+</div>
+<div class="glass-card p-8 rounded-2xl border border-outline-variant/30 flex flex-col bg-primary-container group hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-on-primary-container mb-6 text-[32px]">rocket_launch</span>
+<h4 class="font-headline-md text-headline-md text-on-primary mb-2">Ready to Host?</h4>
+<p class="text-on-primary-container text-body-sm mb-6">List your property on the protocol and earn stable rewards globally.</p>
+<button class="w-full py-3 bg-white text-primary font-bold rounded-lg hover:scale-[1.02] active:scale-95 transition-all">Start Listing</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-section-gap bg-surface-container-highest dark:bg-surface-container border-t border-outline-variant/50">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter max-w-container-max mx-auto px-gutter">
+<div class="col-span-1 md:col-span-1">
+<a class="font-display-lg text-headline-md text-primary dark:text-primary-fixed mb-4 block" href="/">Vitrosti</a>
+<p class="text-on-surface-variant font-body-sm pr-8">High-end stablecoin vacation rentals designed for the future of digital permanence.</p>
+</div>
+<div>
+<h5 class="font-label-caps text-label-caps text-on-surface mb-6 uppercase tracking-widest">Protocol</h5>
+<ul class="space-y-4">
+<li><a class="text-on-surface-variant hover:underline decoration-primary underline-offset-4 transition-opacity font-body-sm" href="#">Escrow Rules</a></li>
+<li><a class="text-on-surface-variant hover:underline decoration-primary underline-offset-4 transition-opacity font-body-sm" href="#">Security Audit</a></li>
+<li><a class="text-on-surface-variant hover:underline decoration-primary underline-offset-4 transition-opacity font-body-sm" href="#">USDT Support</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-label-caps text-label-caps text-on-surface mb-6 uppercase tracking-widest">Legal</h5>
+<ul class="space-y-4">
+<li><a class="text-on-surface-variant hover:underline decoration-primary underline-offset-4 transition-opacity font-body-sm" href="#">Privacy Policy</a></li>
+<li><a class="text-on-surface-variant hover:underline decoration-primary underline-offset-4 transition-opacity font-body-sm" href="#">Terms of Service</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-label-caps text-label-caps text-on-surface mb-6 uppercase tracking-widest">Newsletter</h5>
+<div class="flex flex-col gap-3">
+<p class="text-on-surface-variant font-body-sm">Join for curated listings and DAO updates.</p>
+<div class="flex gap-2">
+<input class="bg-surface rounded px-4 py-2 text-sm border-outline-variant/30 focus:border-primary outline-none flex-1" placeholder="Email" type="email"/>
+<button class="bg-primary text-white px-4 py-2 rounded font-label-caps text-[10px]">JOIN</button>
+</div>
+</div>
+</div>
+</div>
+<div class="max-w-container-max mx-auto px-gutter mt-16 pt-8 border-t border-outline-variant/20 text-center">
+<p class="text-on-surface-variant font-body-sm opacity-80">© 2024 Vitrosti Protocol. Built for Digital Permanence.</p>
+</div>
+</footer>
+<!-- Interactive Search Bar Micro-interaction -->
+<script>
+        document.querySelectorAll('.glass-card input').forEach(input => {
+            input.addEventListener('focus', () => {
+                input.closest('div').classList.add('bg-white/50');
+            });
+            input.addEventListener('blur', () => {
+                input.closest('div').classList.remove('bg-white/50');
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Checkout | Vitrosti Protocol</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        @font-face {
+            font-family: 'Geist';
+            src: url('https://cdn.jsdelivr.net/npm/geist-font@1.1.0/fonts/geist-sans/Geist-Regular.woff2') format('woff2');
+            font-weight: 400;
+        }
+        @font-face {
+            font-family: 'Geist';
+            src: url('https://cdn.jsdelivr.net/npm/geist-font@1.1.0/fonts/geist-sans/Geist-Medium.woff2') format('woff2');
+            font-weight: 500;
+        }
+        @font-face {
+            font-family: 'Geist';
+            src: url('https://cdn.jsdelivr.net/npm/geist-font@1.1.0/fonts/geist-sans/Geist-SemiBold.woff2') format('woff2');
+            font-weight: 600;
+        }
+        @font-face {
+            font-family: 'Geist';
+            src: url('https://cdn.jsdelivr.net/npm/geist-font@1.1.0/fonts/geist-sans/Geist-Bold.woff2') format('woff2');
+            font-weight: 700;
+        }
+
+        body {
+            font-family: 'Geist', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+
+        /* Custom Ambient Shadows per Design System */
+        .ambient-lift {
+            box-shadow: 
+                0 0 0 1px rgba(0, 0, 0, 0.05),
+                0 2px 4px rgba(0, 0, 0, 0.05),
+                0 10px 20px rgba(0, 0, 0, 0.03);
+        }
+
+        .glass-header {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "inverse-surface": "#283044",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#35455a",
+                        "on-surface": "#131b2e",
+                        "surface-bright": "#faf8ff",
+                        "primary-fixed": "#b0f0d6",
+                        "primary-fixed-dim": "#95d3ba",
+                        "secondary-container": "#e0e3e5",
+                        "on-tertiary-fixed-variant": "#38485d",
+                        "on-tertiary-container": "#a2b2cb",
+                        "primary-container": "#064e3b",
+                        "inverse-primary": "#95d3ba",
+                        "on-secondary-container": "#626567",
+                        "on-tertiary-fixed": "#0b1c30",
+                        "tertiary-fixed": "#d3e4fe",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#2b6954",
+                        "on-background": "#131b2e",
+                        "on-primary-fixed-variant": "#0b513d",
+                        "on-tertiary": "#ffffff",
+                        "primary": "#003527",
+                        "surface-variant": "#dae2fd",
+                        "secondary": "#5c5f61",
+                        "tertiary-fixed-dim": "#b7c8e1",
+                        "on-primary-container": "#80bea6",
+                        "surface-container-highest": "#dae2fd",
+                        "background": "#faf8ff",
+                        "on-secondary-fixed-variant": "#444749",
+                        "surface-container-high": "#e2e7ff",
+                        "surface": "#faf8ff",
+                        "inverse-on-surface": "#eef0ff",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#404944",
+                        "outline": "#707974",
+                        "surface-dim": "#d2d9f4",
+                        "secondary-fixed": "#e0e3e5",
+                        "surface-container": "#eaedff",
+                        "surface-container-low": "#f2f3ff",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#1f2f43",
+                        "on-primary-fixed": "#002117",
+                        "secondary-fixed-dim": "#c4c7c9",
+                        "outline-variant": "#bfc9c3",
+                        "on-secondary-fixed": "#191c1e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "unit": "4px",
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "section-gap": "80px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["Geist"],
+                        "display-lg-mobile": ["Geist"],
+                        "body-sm": ["Geist"],
+                        "display-lg": ["Geist"],
+                        "body-base": ["Geist"],
+                        "headline-md": ["Geist"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "display-lg-mobile": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "letterSpacing": "0em", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "600"}],
+                        "body-base": ["16px", {"lineHeight": "1.6", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.02em", "fontWeight": "500"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- Compact Checkout Header (Suppressed Global Nav) -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 glass-header border-b border-outline-variant/30">
+<div class="max-w-container-max mx-auto px-gutter h-20 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<a class="flex items-center group transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined text-primary text-[28px] mr-2">arrow_back</span>
+<span class="font-display-lg text-headline-md tracking-tight text-primary">Vitrosti</span>
+</a>
+</div>
+<div class="hidden md:flex items-center gap-2 text-on-surface-variant font-label-caps uppercase tracking-widest text-[10px]">
+<span class="text-primary font-bold">1. Details</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span>2. Escrow Setup</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span>3. Confirmation</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant">security</span>
+<span class="font-label-caps text-on-surface-variant text-[11px] hidden sm:inline">Secure Protocol</span>
+</div>
+</div>
+</header>
+<main class="pt-32 pb-section-gap px-gutter max-w-container-max mx-auto">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+<!-- Left Column: Tenant Form & Details -->
+<div class="lg:col-span-7 space-y-10">
+<section>
+<h1 class="font-display-lg text-display-lg text-primary mb-2">Finalize your stay</h1>
+<p class="font-body-base text-on-surface-variant">Review your booking details and provide tenant information for the smart contract ledger.</p>
+</section>
+<!-- Booking Summary Card -->
+<section class="bg-surface-container-low rounded-xl p-8 border border-outline-variant/20 ambient-lift">
+<div class="flex flex-col md:flex-row gap-6">
+<div class="w-full md:w-40 h-40 rounded-lg overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="A high-end, minimalist architectural villa in a Mediterranean setting, featuring clean white concrete lines, large glass expanses, and a private turquoise infinity pool. The lighting is bright and airy, reflecting a premium light-mode aesthetic with soft morning shadows. The overall mood is sophisticated, secure, and serene, matching the Vitrosti brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMcsz2HSjy3vcZSSG5nAXpODjzgTC4PSDnwYb5RQMqc2kBGkxuEplQ77dioSo_Ft-H7p0YF5DPT9sO293Hsn4XLiTAUFxlbzEPCAovZQyNRnjJ2mXuGLQ7GRiSSCjI55JzsLCKx0QLrdwB-zyeHTPibFZ-jCix7Iif9ldqeYwrVmLuDllluf88G9baKdaVbn772GDE9AwT3O_2SQD2UHD7j27LQ73CqEESJ_cgk_hDrwP_ocbXeS-vX_EYC-5irwQ90aKVFcNpCOg"/>
+</div>
+<div class="flex-grow space-y-4">
+<div>
+<h2 class="font-headline-md text-headline-md text-primary">Azure Horizon Villa</h2>
+<p class="font-body-sm text-on-surface-variant">Santorini, Greece</p>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-1">
+<span class="font-label-caps text-on-surface-variant text-[10px] block">DATES</span>
+<p class="font-body-base font-medium">Oct 14 — Oct 21, 2024</p>
+</div>
+<div class="space-y-1">
+<span class="font-label-caps text-on-surface-variant text-[10px] block">GUESTS</span>
+<p class="font-body-base font-medium">2 Adults, 1 Guest</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Tenant Details Form -->
+<section class="space-y-6">
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-primary">person_outline</span>
+<h3 class="font-headline-md text-headline-md">Tenant Details</h3>
+</div>
+<form class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="md:col-span-2">
+<label class="font-label-caps text-on-surface-variant text-[11px] mb-2 block">FULL LEGAL NAME</label>
+<input class="w-full bg-surface-container-low border-none focus:ring-1 focus:ring-primary rounded-lg p-4 font-body-base" placeholder="Johnathan Doe" type="text"/>
+</div>
+<div>
+<label class="font-label-caps text-on-surface-variant text-[11px] mb-2 block">EMAIL ADDRESS</label>
+<input class="w-full bg-surface-container-low border-none focus:ring-1 focus:ring-primary rounded-lg p-4 font-body-base" placeholder="john@protocol.io" type="email"/>
+</div>
+<div>
+<label class="font-label-caps text-on-surface-variant text-[11px] mb-2 block">PHONE NUMBER</label>
+<input class="w-full bg-surface-container-low border-none focus:ring-1 focus:ring-primary rounded-lg p-4 font-body-base" placeholder="+1 (555) 000-0000" type="tel"/>
+</div>
+<div class="md:col-span-2 flex items-start gap-3 mt-2">
+<input class="mt-1 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<p class="font-body-sm text-on-surface-variant">I agree to the <a class="text-primary underline underline-offset-4 decoration-primary/30" href="#">Escrow Rules</a> and understand that the security deposit is held in a Vitrosti smart contract for the duration of the stay.</p>
+</div>
+</form>
+</section>
+</div>
+<!-- Right Column: Price Breakdown & CTA -->
+<aside class="lg:col-span-5 sticky top-32">
+<div class="bg-surface-container-highest rounded-xl p-8 border border-outline-variant/30 ambient-lift space-y-8">
+<h3 class="font-headline-md text-headline-md text-primary">Price Breakdown</h3>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<span class="font-body-base text-on-surface-variant">7 Nights stay</span>
+<span class="font-body-base font-medium">4,200.00 USDT</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-base text-on-surface-variant">Service Protocol Fee</span>
+<span class="font-body-base font-medium">124.50 USDT</span>
+</div>
+<div class="flex justify-between items-center text-primary-container font-semibold pt-4 border-t border-outline-variant/30">
+<span class="font-headline-md">Total Stay</span>
+<span class="font-headline-md">4,324.50 USDT</span>
+</div>
+</div>
+<div class="bg-primary/5 rounded-lg p-6 border border-primary/10 space-y-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">verified_user</span>
+<span class="font-label-caps text-primary text-[11px]">ESCROW SECURITY DEPOSIT</span>
+</div>
+<div class="flex justify-between items-end">
+<div>
+<p class="font-body-sm text-on-surface-variant max-w-[200px]">Fully refundable after inspection by host ledger.</p>
+</div>
+<div class="text-right">
+<span class="font-headline-md text-primary block">1,500.00</span>
+<span class="font-label-caps text-on-surface-variant text-[10px]">USDT</span>
+</div>
+</div>
+</div>
+<div class="pt-6 border-t border-outline-variant/30">
+<div class="flex justify-between items-center mb-8">
+<span class="font-label-caps text-on-surface-variant">TOTAL COMMITMENT</span>
+<div class="text-right">
+<span class="font-display-lg text-[32px] text-primary block leading-none">5,824.50</span>
+<span class="font-label-caps text-primary text-[12px]">USDT</span>
+</div>
+</div>
+<button class="w-full bg-primary-container text-on-primary-container py-5 rounded-lg font-headline-md hover:opacity-90 transition-all active:scale-[0.98] flex items-center justify-center gap-3">
+                            Confirm and Proceed to Payment
+                            <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<p class="text-center font-body-sm text-on-surface-variant mt-6 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[16px]">lock</span>
+                            Secured by Vitrosti Smart Escrow
+                        </p>
+</div>
+</div>
+<!-- Trust Badges -->
+<div class="mt-8 grid grid-cols-3 gap-4">
+<div class="flex flex-col items-center text-center space-y-2">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[20px]">account_balance_wallet</span>
+</div>
+<span class="font-label-caps text-[9px] text-on-surface-variant">SECURE WALLET</span>
+</div>
+<div class="flex flex-col items-center text-center space-y-2">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[20px]">published_with_changes</span>
+</div>
+<span class="font-label-caps text-[9px] text-on-surface-variant">AUTO REFUND</span>
+</div>
+<div class="flex flex-col items-center text-center space-y-2">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[20px]">gavel</span>
+</div>
+<span class="font-label-caps text-[9px] text-on-surface-variant">LEDGER PROOF</span>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- Footer as specified in JSON -->
+<footer class="w-full py-section-gap bg-surface-container-highest border-t border-outline-variant/50">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter max-w-container-max mx-auto px-gutter">
+<div class="space-y-6">
+<span class="font-display-lg text-headline-md text-primary">Vitrosti</span>
+<p class="font-body-sm text-on-surface-variant max-w-xs">
+                    © 2024 Vitrosti Protocol. Built for Digital Permanence.
+                </p>
+</div>
+<div>
+<h4 class="font-label-caps text-primary mb-6">PROTOCOL</h4>
+<ul class="space-y-3 font-body-sm text-on-surface-variant">
+<li><a class="hover:underline decoration-primary underline-offset-4 opacity-80 hover:opacity-100 transition-opacity" href="#">Privacy Policy</a></li>
+<li><a class="hover:underline decoration-primary underline-offset-4 opacity-80 hover:opacity-100 transition-opacity" href="#">Terms of Service</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-label-caps text-primary mb-6">COMPLIANCE</h4>
+<ul class="space-y-3 font-body-sm text-on-surface-variant">
+<li><a class="hover:underline decoration-primary underline-offset-4 opacity-80 hover:opacity-100 transition-opacity" href="#">Escrow Rules</a></li>
+<li><a class="hover:underline decoration-primary underline-offset-4 opacity-80 hover:opacity-100 transition-opacity" href="#">Security Audit</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-label-caps text-primary mb-6">SUPPORT</h4>
+<ul class="space-y-3 font-body-sm text-on-surface-variant">
+<li><a class="hover:underline decoration-primary underline-offset-4 opacity-80 hover:opacity-100 transition-opacity" href="#">USDT Support</a></li>
+<li><a class="hover:underline decoration-primary underline-offset-4 opacity-80 hover:opacity-100 transition-opacity" href="#">Contact Node</a></li>
+</ul>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interaction for form focus states
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.classList.add('scale-[1.01]');
+                input.parentElement.style.transition = 'transform 0.2s ease-out';
+            });
+            input.addEventListener('blur', () => {
+                input.parentElement.classList.remove('scale-[1.01]');
+            });
+        });
+
+        // Sticky Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 20) {
+                header.classList.add('shadow-sm');
+            } else {
+                header.classList.remove('shadow-sm');
+            }
+        });
+    </script>
+</body></html>

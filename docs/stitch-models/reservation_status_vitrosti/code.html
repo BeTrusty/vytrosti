@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Booking & Escrow Status | Vitrosti</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "inverse-surface": "#283044",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#35455a",
+                        "on-surface": "#131b2e",
+                        "surface-bright": "#faf8ff",
+                        "primary-fixed": "#b0f0d6",
+                        "primary-fixed-dim": "#95d3ba",
+                        "secondary-container": "#e0e3e5",
+                        "on-tertiary-fixed-variant": "#38485d",
+                        "on-tertiary-container": "#a2b2cb",
+                        "primary-container": "#064e3b",
+                        "inverse-primary": "#95d3ba",
+                        "on-secondary-container": "#626567",
+                        "on-tertiary-fixed": "#0b1c30",
+                        "tertiary-fixed": "#d3e4fe",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#2b6954",
+                        "on-background": "#131b2e",
+                        "on-primary-fixed-variant": "#0b513d",
+                        "on-tertiary": "#ffffff",
+                        "primary": "#003527",
+                        "surface-variant": "#dae2fd",
+                        "secondary": "#5c5f61",
+                        "tertiary-fixed-dim": "#b7c8e1",
+                        "on-primary-container": "#80bea6",
+                        "surface-container-highest": "#dae2fd",
+                        "background": "#faf8ff",
+                        "on-secondary-fixed-variant": "#444749",
+                        "surface-container-high": "#e2e7ff",
+                        "surface": "#faf8ff",
+                        "inverse-on-surface": "#eef0ff",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#404944",
+                        "outline": "#707974",
+                        "surface-dim": "#d2d9f4",
+                        "secondary-fixed": "#e0e3e5",
+                        "surface-container": "#eaedff",
+                        "surface-container-low": "#f2f3ff",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#1f2f43",
+                        "on-primary-fixed": "#002117",
+                        "secondary-fixed-dim": "#c4c7c9",
+                        "outline-variant": "#bfc9c3",
+                        "on-secondary-fixed": "#191c1e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "unit": "4px",
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "section-gap": "80px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["Geist"],
+                        "display-lg-mobile": ["Geist"],
+                        "body-sm": ["Geist"],
+                        "display-lg": ["Geist"],
+                        "body-base": ["Geist"],
+                        "headline-md": ["Geist"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "display-lg-mobile": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "letterSpacing": "0em", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "600"}],
+                        "body-base": ["16px", {"lineHeight": "1.6", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.02em", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Geist', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .escrow-glow {
+            box-shadow: 0 0 20px rgba(6, 78, 59, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface selection:bg-primary-fixed-dim/30">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface-container-lowest/80 backdrop-blur-md border-b border-outline-variant/30 shadow-sm">
+<div class="flex justify-between items-center h-20 px-gutter w-full max-w-container-max mx-auto">
+<div class="flex items-center gap-8">
+<span class="font-display-lg text-headline-md tracking-tight text-primary dark:text-primary-fixed">Vitrosti</span>
+<nav class="hidden md:flex items-center space-x-8">
+<a class="text-on-surface-variant dark:text-on-secondary-container hover:text-primary dark:hover:text-primary-fixed transition-colors font-body-base text-body-base" href="#">Destinations</a>
+<a class="text-on-surface-variant dark:text-on-secondary-container hover:text-primary dark:hover:text-primary-fixed transition-colors font-body-base text-body-base" href="#">Experiences</a>
+<a class="text-on-surface-variant dark:text-on-secondary-container hover:text-primary dark:hover:text-primary-fixed transition-colors font-body-base text-body-base" href="#">Hosting</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">language</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">notifications</button>
+<button class="bg-primary text-on-primary px-6 py-2.5 rounded-full font-label-caps text-label-caps hover:opacity-90 active:scale-95 transition-all">
+                    Connect Wallet
+                </button>
+</div>
+</div>
+</header>
+<main class="pt-32 pb-section-gap px-gutter max-w-container-max mx-auto">
+<!-- Page Header & Hero -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-gutter mb-12 items-end">
+<div class="lg:col-span-8">
+<div class="flex items-center gap-3 mb-4">
+<span class="bg-primary-fixed text-on-primary-fixed-variant px-3 py-1 rounded-full font-label-caps text-[10px] uppercase tracking-widest">Active Escrow</span>
+<span class="text-on-surface-variant font-body-sm text-body-sm">Booking ID: #VTR-8821092</span>
+</div>
+<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg mb-4">Modern Minimalist Estate, <br/><span class="text-primary/60">Zurich Lakeside</span></h1>
+<p class="font-body-base text-body-base text-on-surface-variant max-w-2xl">Your reservation is confirmed. The security deposit is currently held in our immutable smart contract, ensuring digital permanence and protection for both parties.</p>
+</div>
+<div class="lg:col-span-4 flex flex-col items-end gap-4">
+<div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant/30 w-full lg:w-auto">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional studio portrait of a high-end luxury property manager in a sharp tailored suit. The lighting is soft and cinematic, with a clean architectural background. The overall aesthetic is trustworthy, sophisticated, and modern, utilizing a cool-toned color palette of deep slates and emerald greens." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2FDpRB46aLFrWj-6yzjFltj40svUGXSwLHKaNAI3WzNzRJCaz3dHZ6CCwxtz5aBNzi2odDK6P5CE8_iKdshiTZyoxwhAZIfdxolSgNlNikvMDeuVo4pWzm5z-htIP-yT6oYONFCekqxZeL-phBJWpqbxnRslGbtgTEbu-_d1qdefianTKhn2r22v--ItI0IfkTRLqOoH_gbEYoo5zUvgIn5MRrF1OFbqzp032um_nWib2R3DUEX_5tP84gLoAkoLsgDYDGOf2FVA"/>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-primary">Verified Host</p>
+<p class="font-body-base text-body-base font-semibold">Sebastian Valerius</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Visual Timeline Bento Grid -->
+<section class="mb-12">
+<div class="bg-surface-container-lowest border border-outline-variant/20 rounded-3xl p-8 md:p-12 shadow-sm overflow-hidden relative">
+<!-- Status Banner -->
+<div class="flex flex-col md:flex-row md:items-center justify-between mb-16 gap-6 relative z-10">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-primary-container rounded-full flex items-center justify-center text-on-primary-container escrow-glow">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">enhanced_encryption</span>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-1">Current Status</p>
+<h2 class="font-headline-md text-headline-md">Your deposit is secured in the Vitrosti Escrow</h2>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="bg-surface-variant/50 hover:bg-surface-variant text-on-surface px-6 py-3 rounded-xl font-label-caps text-label-caps transition-all flex items-center gap-2 border border-outline-variant/20">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+                            View Ledger
+                        </button>
+</div>
+</div>
+<!-- Timeline Visualization -->
+<div class="relative pt-8 pb-4">
+<!-- Progress Line Background -->
+<div class="absolute top-[52px] left-0 w-full h-[2px] bg-outline-variant/20"></div>
+<!-- Active Progress Line -->
+<div class="absolute top-[52px] left-0 w-[40%] h-[2px] bg-primary"></div>
+<div class="grid grid-cols-2 md:grid-cols-5 gap-y-12 relative z-10">
+<!-- Step 1: Payment Confirmed -->
+<div class="flex flex-col items-center text-center">
+<div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-[20px]">check</span>
+</div>
+<p class="font-label-caps text-label-caps text-primary mb-1">Step 1</p>
+<p class="font-body-base text-body-base font-medium">Payment Confirmed</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">April 12, 2024</p>
+</div>
+<!-- Step 2: Escrow Locked (Active) -->
+<div class="flex flex-col items-center text-center">
+<div class="relative">
+<div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center mb-6 ring-8 ring-primary-container/30">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">lock</span>
+</div>
+<div class="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full animate-ping"></div>
+</div>
+<p class="font-label-caps text-label-caps text-primary mb-1">Step 2</p>
+<p class="font-body-base text-body-base font-bold">Security Escrow</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">3,500 USDT Secured</p>
+</div>
+<!-- Step 3: Check-in (Future) -->
+<div class="flex flex-col items-center text-center opacity-40">
+<div class="w-10 h-10 rounded-full bg-outline-variant/50 text-on-surface-variant flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-[20px]">vpn_key</span>
+</div>
+<p class="font-label-caps text-label-caps mb-1">Step 3</p>
+<p class="font-body-base text-body-base">Check-in</p>
+<p class="font-body-sm text-body-sm mt-1">May 15, 2024</p>
+</div>
+<!-- Step 4: Check-out (Future) -->
+<div class="flex flex-col items-center text-center opacity-40">
+<div class="w-10 h-10 rounded-full bg-outline-variant/50 text-on-surface-variant flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+</div>
+<p class="font-label-caps text-label-caps mb-1">Step 4</p>
+<p class="font-body-base text-body-base">Check-out</p>
+<p class="font-body-sm text-body-sm mt-1">May 22, 2024</p>
+</div>
+<!-- Step 5: Release (Future) -->
+<div class="flex flex-col items-center text-center opacity-40">
+<div class="w-10 h-10 rounded-full bg-outline-variant/50 text-on-surface-variant flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+</div>
+<p class="font-label-caps text-label-caps mb-1">Step 5</p>
+<p class="font-body-base text-body-base">Deposit Released</p>
+<p class="font-body-sm text-body-sm mt-1">May 24, 2024</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Details & Actions Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Action Items: Check-in Details -->
+<div class="md:col-span-2 bg-surface-container-low rounded-3xl p-8 border border-outline-variant/20">
+<div class="flex items-center gap-3 mb-8">
+<span class="material-symbols-outlined text-primary">assignment</span>
+<h3 class="font-headline-md text-headline-md">Your Check-in Protocol</h3>
+</div>
+<div class="space-y-6">
+<div class="flex gap-6 items-start group">
+<div class="w-10 h-10 bg-surface rounded-lg flex items-center justify-center border border-outline-variant/30 flex-shrink-0 group-hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:text-on-primary-container">qr_code_2</span>
+</div>
+<div>
+<p class="font-body-base font-semibold mb-1">Digital Access Token</p>
+<p class="font-body-sm text-on-surface-variant mb-4">Your digital key will be minted and sent to your wallet 24 hours before arrival. It will grant access to the main gate and the primary estate entrance via NFC.</p>
+<button class="text-primary font-label-caps text-label-caps flex items-center gap-1 hover:underline">
+                                Sync to Wallet <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<div class="h-px bg-outline-variant/10 w-full"></div>
+<div class="flex gap-6 items-start group">
+<div class="w-10 h-10 bg-surface rounded-lg flex items-center justify-center border border-outline-variant/30 flex-shrink-0 group-hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:text-on-primary-container">near_me</span>
+</div>
+<div>
+<p class="font-body-base font-semibold mb-1">Location & Directions</p>
+<p class="font-body-sm text-on-surface-variant mb-4">Alpenstrasse 14, 8002 Zürich. Private underground parking is available. Your reserved spot is #B24.</p>
+<button class="text-primary font-label-caps text-label-caps flex items-center gap-1 hover:underline">
+                                Open in Maps <span class="material-symbols-outlined text-[16px]">map</span>
+</button>
+</div>
+</div>
+<div class="h-px bg-outline-variant/10 w-full"></div>
+<div class="flex gap-6 items-start group">
+<div class="w-10 h-10 bg-surface rounded-lg flex items-center justify-center border border-outline-variant/30 flex-shrink-0 group-hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:text-on-primary-container">info</span>
+</div>
+<div>
+<p class="font-body-base font-semibold mb-1">Arrival Instructions</p>
+<p class="font-body-sm text-on-surface-variant">Host will meet you at the property at 3:00 PM for a quick walkthrough of the smart home controls and security features.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Support & Quick Actions -->
+<div class="space-y-6">
+<!-- Property Card -->
+<div class="bg-surface rounded-3xl border border-outline-variant/20 overflow-hidden group">
+<div class="h-48 relative overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="An ultra-modern minimalist luxury villa overlooking Lake Zurich. The architecture features large glass panels, clean white concrete lines, and lush green landscaping. The lighting is warm golden hour, reflecting off the calm water. The style is premium, architectural, and serene, fitting a high-end luxury vacation rental brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1L88ORcYPDEsWej_3O2wwWY2TXukkZoKBDxmXkxVZDGUPbRwkmV6Uhrxc1LdFYr0gpDTmgRLgcfkQBOA1lPBRDkNsYVCWOVe31sTHo3RSzmCf6SgpinPH_4Fw2E2Op3NKwV57tiPrsIlXpGGkE5XLSTORzyzEc55BwfbwMVpcu97wt9s_zpw6kcr8euYMWAMnCDUUoSbwEfWN3-eYN1LnY3oxbsFrg0D57h1qxEFXlpqF7QWe-fF3t0PZySf6oNvrFC-tFWVe9vQ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-4 left-4 text-white">
+<p class="font-label-caps text-[10px] uppercase tracking-widest opacity-80">Full Estate</p>
+<p class="font-body-base font-bold">Lakeside Sanctuary</p>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-center mb-4">
+<p class="font-body-sm text-on-surface-variant">Dates</p>
+<p class="font-body-sm font-semibold">May 15 - May 22</p>
+</div>
+<div class="flex justify-between items-center">
+<p class="font-body-sm text-on-surface-variant">Total Amount</p>
+<p class="font-body-sm font-semibold">12,450 USDT</p>
+</div>
+</div>
+</div>
+<!-- Support Buttons -->
+<div class="bg-primary text-on-primary rounded-3xl p-8 shadow-sm relative overflow-hidden">
+<!-- Subtle pattern background -->
+<div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 24px 24px;"></div>
+<h4 class="font-headline-md text-headline-md mb-2 relative z-10">Need Assistance?</h4>
+<p class="font-body-sm mb-6 opacity-80 relative z-10">Our 24/7 concierge and support team are ready to ensure your stay is flawless.</p>
+<div class="grid grid-cols-1 gap-3 relative z-10">
+<button class="bg-white text-primary px-4 py-3 rounded-xl font-label-caps text-label-caps hover:bg-primary-fixed transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">support_agent</span>
+                            Live Support
+                        </button>
+<button class="bg-primary-container text-on-primary-container px-4 py-3 rounded-xl font-label-caps text-label-caps border border-primary-fixed/20 hover:border-primary-fixed transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">mail</span>
+                            Contact Host
+                        </button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-highest dark:bg-surface-container w-full py-section-gap border-t border-outline-variant/50">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter max-w-container-max mx-auto px-gutter">
+<div class="col-span-1 md:col-span-1">
+<span class="font-display-lg text-headline-md text-primary dark:text-primary-fixed mb-6 block">Vitrosti</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-xs">
+                    Built for digital permanence. The world's first stablecoin-native luxury rental protocol with automated escrow protection.
+                </p>
+</div>
+<div class="flex flex-col space-y-4">
+<h5 class="font-label-caps text-label-caps text-primary">Protocol</h5>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:underline decoration-primary underline-offset-4 transition-all opacity-80 hover:opacity-100" href="#">Escrow Rules</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:underline decoration-primary underline-offset-4 transition-all opacity-80 hover:opacity-100" href="#">Security Audit</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:underline decoration-primary underline-offset-4 transition-all opacity-80 hover:opacity-100" href="#">USDT Support</a>
+</div>
+<div class="flex flex-col space-y-4">
+<h5 class="font-label-caps text-label-caps text-primary">Legal</h5>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:underline decoration-primary underline-offset-4 transition-all opacity-80 hover:opacity-100" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:underline decoration-primary underline-offset-4 transition-all opacity-80 hover:opacity-100" href="#">Terms of Service</a>
+</div>
+<div class="flex flex-col justify-between">
+<div class="space-y-4">
+<h5 class="font-label-caps text-label-caps text-primary">Newsletter</h5>
+<div class="relative">
+<input class="bg-surface-container-low border border-outline-variant/30 rounded-full py-2 px-4 w-full text-body-sm focus:ring-primary focus:border-primary outline-none" placeholder="Updates for hosts" type="email"/>
+<button class="absolute right-1 top-1 bg-primary text-on-primary p-1.5 rounded-full">
+<span class="material-symbols-outlined text-[16px]">arrow_upward</span>
+</button>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant opacity-60 mt-8">
+                    © 2024 Vitrosti Protocol. Built for Digital Permanence.
+                </p>
+</div>
+</div>
+</footer>
+<!-- Micro-interactions & Visual Effects -->
+<script>
+        // Subtle hover effect for the timeline dots
+        document.querySelectorAll('.flex.flex-col.items-center.text-center').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                const icon = item.querySelector('.material-symbols-outlined');
+                if (icon) icon.style.transform = 'scale(1.1)';
+            });
+            item.addEventListener('mouseleave', () => {
+                const icon = item.querySelector('.material-symbols-outlined');
+                if (icon) icon.style.transform = 'scale(1.0)';
+            });
+        });
+
+        // Sticky Nav Transparency Adjustment
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 20) {
+                header.classList.add('shadow-md');
+            } else {
+                header.classList.remove('shadow-md');
+            }
+        });
+    </script>
+</body></html>
