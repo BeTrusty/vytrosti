@@ -1,10 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useTransition } from 'react';
 import { Card, Button, Chip, Alert, Input, TextField, Label } from '@heroui/react';
-import { simulatePayment, executeCheckoutSettlement, fileDispute } from '@/application/actions/booking';
-import { ShieldAlert, Landmark, Copy, AlertTriangle, ShieldCheck, CheckCircle } from 'lucide-react';
+import { toast } from '@heroui/react';
+import { executeCheckoutSettlement, fileDispute } from '@/application/actions/booking';
+import { ShieldAlert, Landmark, ShieldCheck, CheckCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { PaymentQRPanel } from './PaymentQRPanel';
 
 interface ReservationDetailsProps {
   reservation: {
@@ -39,69 +41,47 @@ interface ReservationDetailsProps {
       trustlessEscrowId: string | null;
     }[];
   };
+  isMockMode?: boolean;
 }
 
-export function ReservationDetails({ reservation }: ReservationDetailsProps) {
+export function ReservationDetails({ reservation, isMockMode = true }: ReservationDetailsProps) {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [simulating, setSimulating] = useState(false);
+  const [isCheckingOut, startCheckout] = useTransition();
+  const [isDisputing, startDispute] = useTransition();
   const [disputeReason, setDisputeReason] = useState('');
   const [disputeAmount, setDisputeAmount] = useState(reservation.securityDepositUsdt);
   const [showDisputeForm, setShowDisputeForm] = useState(false);
-  const [copied, setCopied] = useState(false);
 
   const intent = reservation.paymentIntents?.[0];
   const escrow = reservation.escrows?.[0];
 
-  const handleCopy = (text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCheckout = () => {
+    startCheckout(async () => {
+      const result = await executeCheckoutSettlement(reservation.id);
+      if (result.success) {
+        toast.success('Checkout complete! Rent released to Host. Deposit refunded to Guest.');
+        router.refresh();
+      } else {
+        toast.danger(result.error || 'Checkout settlement failed. Please try again.');
+      }
+    });
   };
 
-  const handleSimulatePayment = async () => {
-    if (!intent) return;
-    setSimulating(true);
-    // Simulate from a random guest account address
-    const result = await simulatePayment(
-      intent.wallet.id, 
-      'GCTENANT455NDJE7QWMEV4SIOTWIEZCA4DZ32C37R7635M262NZKU6GUEP', 
-      intent.amountUsdt
-    );
-    setSimulating(false);
-    if (result.success) {
-      router.refresh();
-    } else {
-      alert(result.error || 'Simulation failed');
-    }
-  };
-
-  const handleCheckout = async () => {
-    setLoading(true);
-    const result = await executeCheckoutSettlement(reservation.id);
-    setLoading(false);
-    if (result.success) {
-      router.refresh();
-    } else {
-      alert(result.error || 'Checkout failed');
-    }
-  };
-
-  const handleDisputeSubmit = async (e: React.FormEvent) => {
+  const handleDisputeSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!disputeReason) return;
-    setLoading(true);
-    const result = await fileDispute(reservation.id, disputeAmount, disputeReason);
-    setLoading(false);
-    if (result.success) {
-      setShowDisputeForm(false);
-      router.refresh();
-    } else {
-      alert(result.error || 'Failed to file dispute');
-    }
+    startDispute(async () => {
+      const result = await fileDispute(reservation.id, disputeAmount, disputeReason);
+      if (result.success) {
+        toast.warning('Dispute filed. Deposit locked pending resolution by protocol admins.');
+        setShowDisputeForm(false);
+        router.refresh();
+      } else {
+        toast.danger(result.error || 'Failed to file dispute. Please try again.');
+      }
+    });
   };
 
-  // Helper to color reservation status
   const getStatusChip = (status: string) => {
     switch (status) {
       case 'pending_payment':
@@ -171,11 +151,6 @@ export function ReservationDetails({ reservation }: ReservationDetailsProps) {
                     <span className="text-slate-500">Secured Smart Account:</span>
                     <div className="flex items-center gap-1.5 font-mono text-slate-700">
                       <span>{escrow.contractAddress ? `${escrow.contractAddress.substring(0, 8)}...${escrow.contractAddress.slice(-8)}` : 'N/A'}</span>
-                      {escrow.contractAddress && (
-                        <button onClick={() => handleCopy(escrow.contractAddress || '')} className="text-[#064e3b] hover:text-[#003527]">
-                          <Copy size={12} />
-                        </button>
-                      )}
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
@@ -194,7 +169,7 @@ export function ReservationDetails({ reservation }: ReservationDetailsProps) {
           </Card.Content>
         </Card>
 
-        {/* Guest Interactive flow controls */}
+        {/* Guest Stay Verification Controls */}
         {(reservation.status === 'escrowed' || reservation.status === 'active') && (
           <Card className="border border-[#eaedff] bg-white p-6 rounded-3xl">
             <Card.Content className="p-0 flex flex-col gap-4">
@@ -202,24 +177,24 @@ export function ReservationDetails({ reservation }: ReservationDetailsProps) {
                 <h4 className="font-bold text-[#131b2e] text-base flex items-center gap-1.5">
                   <ShieldCheck size={20} className="text-[#064e3b]" /> Stay Verification
                 </h4>
-                <p className="text-slate-500 text-xs mt-1">Once checked out, authorize release of rent/deposit funds, or initiate claim for damage.</p>
+                <p className="text-slate-500 text-xs mt-1">Once checked out, authorize release of rent and deposit funds, or initiate a damage claim.</p>
               </div>
 
               <div className="flex flex-wrap gap-4 mt-2">
-                <Button 
-                  onClick={handleCheckout} 
-                  variant="primary" 
-                  isPending={loading}
+                <Button
+                  onPress={handleCheckout}
+                  variant="primary"
+                  isPending={isCheckingOut}
                   className="font-bold bg-[#064e3b] text-white"
                 >
-                  Checkout & Release Funds
+                  Checkout &amp; Release Funds
                 </Button>
-                <Button 
-                  onClick={() => setShowDisputeForm(!showDisputeForm)} 
+                <Button
+                  onPress={() => setShowDisputeForm(!showDisputeForm)}
                   variant="danger-soft"
                   className="font-semibold"
                 >
-                  Initiate Stay Dispute
+                  <ShieldAlert size={15} /> Initiate Stay Dispute
                 </Button>
               </div>
 
@@ -249,8 +224,8 @@ export function ReservationDetails({ reservation }: ReservationDetailsProps) {
                     </TextField>
                   </div>
                   <div className="flex gap-2 justify-end">
-                    <Button size="sm" variant="secondary" onClick={() => setShowDisputeForm(false)}>Cancel</Button>
-                    <Button size="sm" type="submit" variant="danger" isPending={loading}>File Dispute</Button>
+                    <Button size="sm" variant="secondary" onPress={() => setShowDisputeForm(false)}>Cancel</Button>
+                    <Button size="sm" type="submit" variant="danger" isPending={isDisputing}>File Dispute</Button>
                   </div>
                 </form>
               )}
@@ -283,7 +258,7 @@ export function ReservationDetails({ reservation }: ReservationDetailsProps) {
         )}
       </div>
 
-      {/* Right side: Payment Intent panel */}
+      {/* Right side: Payment Portal */}
       <div className="lg:col-span-4">
         {intent && (
           <Card className="ambient-lift border-none bg-white p-6 rounded-3xl">
@@ -296,53 +271,13 @@ export function ReservationDetails({ reservation }: ReservationDetailsProps) {
               </div>
 
               {intent.status === 'pending' ? (
-                <div className="flex flex-col gap-5">
-                  <div className="bg-[#f2f3ff] p-4 border border-[#eaedff] rounded-2xl flex flex-col items-center text-center gap-2">
-                    <span className="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Total Commitment Due</span>
-                    <h3 className="text-2xl font-extrabold text-[#131b2e]">{parseFloat(intent.amountUsdt).toFixed(2)} USDT</h3>
-                  </div>
-
-                  <div className="flex flex-col gap-2 text-xs">
-                    <label className="text-slate-500 font-semibold">Stellar Account Reference (No Memo)</label>
-                    <div className="bg-[#f2f3ff] border border-[#eaedff] rounded-xl p-3 flex justify-between items-center gap-2">
-                      <span className="font-mono text-slate-600 break-all text-left">
-                        {intent.wallet.publicKey}
-                      </span>
-                      <button 
-                        onClick={() => handleCopy(intent.wallet.publicKey)}
-                        className="text-[#064e3b] hover:text-[#003527] flex-shrink-0"
-                      >
-                        {copied ? 'Copied!' : <Copy size={14} />}
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="text-slate-500 text-xs leading-relaxed bg-[#f2f3ff]/40 p-4 border border-[#eaedff] rounded-2xl">
-                    <span className="font-bold text-slate-700 block mb-1">Transfer instructions:</span>
-                    1. Send USDT to the Stellar account address shown above.<br />
-                    2. Protocol scans ledger automatically every 60 seconds.<br />
-                    3. No memo reference needed.
-                  </div>
-
-                  {/* Simulator widget for easy hackathon validation */}
-                  <div className="border border-indigo-100 bg-[#f2f3ff] rounded-2xl p-4 flex flex-col gap-3">
-                    <span className="text-xs font-bold text-[#064e3b] flex items-center gap-1">
-                      <AlertTriangle size={14} /> Verification Simulator
-                    </span>
-                    <p className="text-[11px] text-slate-500 leading-relaxed">
-                      Click below to simulate sending the transfer. This triggers scanning ledger and double-entry settlements immediately.
-                    </p>
-                    <Button 
-                      onClick={handleSimulatePayment} 
-                      variant="primary"
-                      size="sm"
-                      isPending={simulating}
-                      className="font-bold w-full bg-[#064e3b] text-white"
-                    >
-                      Simulate Deposit Confirmation
-                    </Button>
-                  </div>
-                </div>
+                <PaymentQRPanel
+                  paymentIntentId={intent.id}
+                  walletId={intent.wallet.id}
+                  walletPublicKey={intent.wallet.publicKey}
+                  amountUsdt={intent.amountUsdt}
+                  isMockMode={isMockMode}
+                />
               ) : (
                 <div className="flex flex-col gap-4 text-center items-center py-6">
                   <CheckCircle size={48} className="text-emerald-500" />

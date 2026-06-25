@@ -1,4 +1,4 @@
-import * as StellarSdk from 'stellar-sdk';
+import * as StellarSdk from '@stellar/stellar-sdk';
 import { db } from '../db/client';
 import { blockchainTransactions, wallets } from '../db/schema';
 import { eq } from 'drizzle-orm';

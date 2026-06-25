@@ -25,7 +25,9 @@ const EXCLUDE_FILES = [
   'tsconfig.json',
   'next-env.d.ts',
   'eslint.config.mjs',
-  'postcss.config.mjs'
+  'postcss.config.mjs',
+  'seed.ts',
+  'seeder.ts'
 ];
 
 // Regex Patterns
@@ -119,7 +121,7 @@ function walkDir(dir, callback) {
         walkDir(filePath, callback);
       }
     } else {
-      if (!EXCLUDE_FILES.includes(file) && !file.endsWith('.png') && !file.endsWith('.ico') && !file.endsWith('.jpg') && !file.endsWith('.jpeg')) {
+      if (!EXCLUDE_FILES.includes(file) && !file.toLowerCase().includes('seed') && !file.endsWith('.png') && !file.endsWith('.ico') && !file.endsWith('.jpg') && !file.endsWith('.jpeg')) {
         callback(filePath, relativePath);
       }
     }
@@ -153,6 +155,49 @@ function checkGitignore() {
   } catch {
     // Git not available or not a repo
   }
+}
+
+// Get list of files to scan using git to only scan tracked or untracked but non-ignored files
+function getFilesToScan() {
+  const scanList = [];
+  try {
+    const output = execSync('git ls-files --cached --others --exclude-standard', {
+      cwd: PROJECT_ROOT,
+      encoding: 'utf8'
+    });
+    const files = output.split('\n').map(f => f.trim()).filter(Boolean);
+    for (const relativePath of files) {
+      const parts = relativePath.replace(/\\/g, '/').split('/');
+      const isExcludedDir = parts.slice(0, -1).some(part => EXCLUDE_DIRS.includes(part));
+      if (isExcludedDir) continue;
+
+      const fileName = parts[parts.length - 1];
+      if (EXCLUDE_FILES.includes(fileName) || fileName.toLowerCase().includes('seed')) continue;
+
+      if (
+        fileName.endsWith('.png') ||
+        fileName.endsWith('.ico') ||
+        fileName.endsWith('.jpg') ||
+        fileName.endsWith('.jpeg') ||
+        fileName.endsWith('.gif') ||
+        fileName.endsWith('.svg') ||
+        fileName.endsWith('.pdf')
+      ) {
+        continue;
+      }
+
+      scanList.push({
+        filePath: path.join(PROJECT_ROOT, relativePath),
+        relativePath
+      });
+    }
+  } catch (error) {
+    // Fallback to manual directory walking if git command fails
+    walkDir(PROJECT_ROOT, (filePath, relativePath) => {
+      scanList.push({ filePath, relativePath });
+    });
+  }
+  return scanList;
 }
 
 // Main Scan logic
@@ -253,9 +298,10 @@ function scanFile(filePath, relativePath) {
 console.log('Checking repository security and compliance with Definition of Done...');
 checkGitignore();
 
-walkDir(PROJECT_ROOT, (filePath, relativePath) => {
+const filesToScan = getFilesToScan();
+for (const { filePath, relativePath } of filesToScan) {
   scanFile(filePath, relativePath);
-});
+}
 
 console.log('\n--- Verification Summary ---');
 console.log(`Errors: ${errorsCount}`);

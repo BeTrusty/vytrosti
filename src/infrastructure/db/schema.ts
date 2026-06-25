@@ -20,9 +20,18 @@ export const disputeStatusEnum = pgEnum('dispute_status', ['active', 'resolved_t
 export const ledgerAccountTypeEnum = pgEnum('ledger_account_type', ['asset', 'liability', 'equity', 'revenue', 'expense']);
 export const ledgerDirectionEnum = pgEnum('ledger_direction', ['debit', 'credit']);
 
+// 0. Users
+export const users = pgTable('users', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  name: text('name').notNull(),
+  email: text('email').notNull().unique(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
 // 1. Owners
 export const owners = pgTable('owners', {
   id: uuid('id').defaultRandom().primaryKey(),
+  userId: uuid('user_id').references(() => users.id).notNull().unique(),
   stellarPublicKey: text('stellar_public_key').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
@@ -30,6 +39,7 @@ export const owners = pgTable('owners', {
 // 2. Tenants
 export const tenants = pgTable('tenants', {
   id: uuid('id').defaultRandom().primaryKey(),
+  userId: uuid('user_id').references(() => users.id).notNull().unique(),
   stellarPublicKey: text('stellar_public_key').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
@@ -177,11 +187,18 @@ export const blockchainTransactions = pgTable('blockchain_transactions', {
 });
 
 // Relations
-export const ownerRelations = relations(owners, ({ many }) => ({
+export const userRelations = relations(users, ({ one }) => ({
+  owner: one(owners, { fields: [users.id], references: [owners.userId] }),
+  tenant: one(tenants, { fields: [users.id], references: [tenants.userId] }),
+}));
+
+export const ownerRelations = relations(owners, ({ one, many }) => ({
+  user: one(users, { fields: [owners.userId], references: [users.id] }),
   listings: many(listings),
 }));
 
-export const tenantRelations = relations(tenants, ({ many }) => ({
+export const tenantRelations = relations(tenants, ({ one, many }) => ({
+  user: one(users, { fields: [tenants.userId], references: [users.id] }),
   reservations: many(reservations),
 }));
 

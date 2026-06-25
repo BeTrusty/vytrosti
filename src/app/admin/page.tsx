@@ -2,10 +2,19 @@ import React from 'react';
 import { db } from '@/infrastructure/db/client';
 import { AdminDashboard } from '@/presentation/components/AdminDashboard';
 import { ledgerService } from '@/application/services/ledger';
+import { auth } from '@/infrastructure/auth/server';
+import { redirect } from 'next/navigation';
 
 export const revalidate = 0; // Dynamic rendering
 
 export default async function AdminPage() {
+  const sessionResponse = await auth.getSession();
+  const session = sessionResponse && 'data' in sessionResponse ? sessionResponse.data : null;
+  if (!session || session.user.role !== 'admin') {
+    redirect('/login?callbackUrl=/admin');
+  }
+
+
   let listingsCount = 0;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let listingsList: any[] = [];

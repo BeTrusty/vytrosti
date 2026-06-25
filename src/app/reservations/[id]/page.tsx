@@ -87,7 +87,11 @@ export default async function ReservationPage({ params }: ReservationPageProps) 
           <ArrowLeft size={16} /> Back to Search
         </Link>
       </div>
-      <ReservationDetails reservation={formattedRes} />
+      <ReservationDetails
+        reservation={formattedRes}
+        isMockMode={process.env.STELLAR_MOCK !== 'false'}
+      />
     </div>
   );
 }
+

@@ -9,6 +9,7 @@ import { trustlessProvider } from '@/infrastructure/trustless/provider';
 import { stellarProvider } from '@/infrastructure/stellar/provider';
 import { revalidatePath } from 'next/cache';
 import { paymentPoller } from '../services/poller';
+import { auth } from '@/infrastructure/auth/server';
 
 export interface BookingResponse {
   success: boolean;
@@ -24,6 +25,12 @@ export async function createBooking(formData: {
   tenantPublicKey: string;
 }): Promise<BookingResponse> {
   try {
+    const sessionResponse = await auth.getSession();
+    const session = sessionResponse && 'data' in sessionResponse ? sessionResponse.data : null;
+    if (!session) {
+      return { success: false, error: 'You must be authenticated to create a reservation.' };
+    }
+
     const { listingId, checkInStr, checkOutStr, tenantPublicKey } = formData;
 
     if (!listingId || !checkInStr || !checkOutStr || !tenantPublicKey) {
@@ -111,6 +118,59 @@ export async function createBooking(formData: {
     return {
       success: false,
       error: error instanceof Error ? error.message : 'An unexpected error occurred',
+    };
+  }
+}
+
+// Manually triggers the payment poller for a specific payment intent.
+// Called from the guest "Verify Payment" button — does NOT expose the cron endpoint.
+export async function verifyPaymentStatus(paymentIntentId: string): Promise<{
+  success: boolean;
+  paymentDetected: boolean;
+  status?: string;
+  error?: string;
+}> {
+  try {
+    // Snapshot status before polling
+    const { paymentIntents } = await import('@/infrastructure/db/schema');
+    const { eq } = await import('drizzle-orm');
+
+    const intentBefore = await db.query.paymentIntents.findFirst({
+      where: eq(paymentIntents.id, paymentIntentId),
+    });
+
+    if (!intentBefore) {
+      return { success: false, paymentDetected: false, error: 'Payment intent not found' };
+    }
+
+    if (intentBefore.status === 'paid') {
+      // Already confirmed — no need to poll again
+      revalidatePath(`/reservations/${intentBefore.reservationId}`);
+      return { success: true, paymentDetected: true, status: 'paid' };
+    }
+
+    // Run the full payment scanner
+    await paymentPoller.pollPayments();
+
+    // Snapshot status after polling
+    const intentAfter = await db.query.paymentIntents.findFirst({
+      where: eq(paymentIntents.id, paymentIntentId),
+    });
+
+    const detected = intentAfter?.status === 'paid';
+
+    if (detected) {
+      revalidatePath(`/reservations/${intentAfter!.reservationId}`);
+      revalidatePath('/admin');
+    }
+
+    return { success: true, paymentDetected: detected, status: intentAfter?.status };
+  } catch (error) {
+    console.error('Error verifying payment status:', error);
+    return {
+      success: false,
+      paymentDetected: false,
+      error: error instanceof Error ? error.message : 'Ledger scanning failed',
     };
   }
 }

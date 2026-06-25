@@ -14,7 +14,7 @@ import {
 } from './schema';
 import { encryptSecret } from '../crypto';
 import { stellarProvider } from '../stellar/provider';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 
 export async function runDatabaseSeeder() {
   console.log('--- SEEDING DATABASE ---');
@@ -32,6 +32,13 @@ export async function runDatabaseSeeder() {
   await db.delete(owners);
   await db.delete(wallets);
   await db.delete(ledgerAccounts);
+
+  // Wipe auth tables (account before user to satisfy FK constraint).
+  // neon_auth is a local sync of the Neon Auth upstream — deleting here
+  // removes the rows from the DB that the proxy reads, allowing the seed
+  // step below to re-register every test user from scratch via the HTTP API.
+  await db.execute(sql`DELETE FROM neon_auth.account`);
+  await db.execute(sql`DELETE FROM neon_auth.user`);
 
   // 1. Setup Ledger Accounts
   console.log('Seeding ledger accounts...');
@@ -132,6 +139,214 @@ export async function runDatabaseSeeder() {
       address: 'Via Cristoforo Colombo 15',
       city: 'Positano',
       country: 'Italy',
+    },
+    {
+      ownerId: owner1.id,
+      title: 'Santorini Sunset Caldera Villa',
+      description: 'Exquisite cave villa offering panoramic views of the Aegean Sea, private infinity pool, and white-washed luxury.',
+      pricePerNightUsdt: '950.0000',
+      securityDepositUsdt: '1200.0000',
+      images: [
+        'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=800&q=80'
+      ],
+      address: 'Caldera Road 42',
+      city: 'Santorini',
+      country: 'Greece',
+    },
+    {
+      ownerId: owner2.id,
+      title: 'Kyoto Bamboo Wood Chalet',
+      description: 'Traditional wooden townhouse nestled next to Arashiyama bamboo forest with private onsen and zen gardens.',
+      pricePerNightUsdt: '380.0000',
+      securityDepositUsdt: '400.0000',
+      images: [
+        'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=800&q=80'
+      ],
+      address: 'Arashiyama Path 12',
+      city: 'Kyoto',
+      country: 'Japan',
+    },
+    {
+      ownerId: owner1.id,
+      title: 'Manhattan Sky Penthouse',
+      description: 'Ultra-luxury glass penthouse perched high above Central Park with a private helipad access and wrap-around terrace.',
+      pricePerNightUsdt: '1500.0000',
+      securityDepositUsdt: '2000.0000',
+      images: [
+        'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80'
+      ],
+      address: '5th Avenue Penthouse B',
+      city: 'New York',
+      country: 'USA',
+    },
+    {
+      ownerId: owner2.id,
+      title: 'Malibu Beachfront Villa',
+      description: 'Spectacular mid-century modern beach house directly on Malibu sand with private deck, hot tub, and surf access.',
+      pricePerNightUsdt: '1100.0000',
+      securityDepositUsdt: '1500.0000',
+      images: [
+        'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&w=800&q=80'
+      ],
+      address: 'Pacific Coast Highway 2042',
+      city: 'Malibu',
+      country: 'USA',
+    },
+    {
+      ownerId: owner1.id,
+      title: 'Reykjavik Aurora Glass Cabin',
+      description: 'Futuristic A-frame glass cabin designed to watch the Northern Lights directly from your master bed.',
+      pricePerNightUsdt: '550.0000',
+      securityDepositUsdt: '600.0000',
+      images: [
+        'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=800&q=80'
+      ],
+      address: 'Golden Circle Trail 9',
+      city: 'Reykjavik',
+      country: 'Iceland',
+    },
+    {
+      ownerId: owner2.id,
+      title: 'Tulum Jungle Sanctuary',
+      description: 'Eco-chic luxury treehouse offering private cenote pool, open-air master bathroom, and hanging nets.',
+      pricePerNightUsdt: '420.0000',
+      securityDepositUsdt: '500.0000',
+      images: [
+        'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80'
+      ],
+      address: 'Aldea Zama Road Lot 4',
+      city: 'Tulum',
+      country: 'Mexico',
+    },
+    {
+      ownerId: owner1.id,
+      title: 'Copacabana Ocean Loft',
+      description: 'Stylish high-ceiling studio loft steps from Copacabana beach, featuring retro Brazilian design and hammocks.',
+      pricePerNightUsdt: '320.0000',
+      securityDepositUsdt: '350.0000',
+      images: [
+        'https://images.unsplash.com/photo-1502672023488-70e25813eb80?auto=format&fit=crop&w=800&q=80'
+      ],
+      address: 'Avenida Atlantica 1020',
+      city: 'Rio de Janeiro',
+      country: 'Brazil',
+    },
+    {
+      ownerId: owner2.id,
+      title: 'Reykjavik Volcanic Estate',
+      description: 'Architectural volcanic stone estate surrounded by active steam vents and lava fields, with heated geothermal pool.',
+      pricePerNightUsdt: '1250.0000',
+      securityDepositUsdt: '1500.0000',
+      images: [
+        'https://images.unsplash.com/photo-1512915922686-57c11dde9b6b?auto=format&fit=crop&w=800&q=80'
+      ],
+      address: 'Grindavik Geothermal Zone',
+      city: 'Reykjavik',
+      country: 'Iceland',
+    },
+    {
+      ownerId: owner1.id,
+      title: 'Chamonix Alpine Chalet',
+      description: 'Cozy timber chalet under Mont Blanc with sauna, outdoor hot tub, and direct ski-in/ski-out slope access.',
+      pricePerNightUsdt: '720.0000',
+      securityDepositUsdt: '800.0000',
+      images: [
+        'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&w=800&q=80'
+      ],
+      address: 'Chemin des Ecureuils 5',
+      city: 'Chamonix',
+      country: 'France',
+    },
+    {
+      ownerId: owner2.id,
+      title: 'Phuket Beach Hideaway',
+      description: 'Cliffside private pool villa overlooking the Andaman Sea, featuring a dedicated butler and private beach access.',
+      pricePerNightUsdt: '880.0000',
+      securityDepositUsdt: '1000.0000',
+      images: [
+        'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80'
+      ],
+      address: 'Kata Noi Ocean Crest 17',
+      city: 'Phuket',
+      country: 'Thailand',
+    },
+    {
+      ownerId: owner1.id,
+      title: 'Sydney Harbour Penthouse',
+      description: 'Sprawling luxury penthouse with uninterrupted panoramic views of the Opera House and Harbour Bridge.',
+      pricePerNightUsdt: '1400.0000',
+      securityDepositUsdt: '1800.0000',
+      images: [
+        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'
+      ],
+      address: 'Circular Quay East 10',
+      city: 'Sydney',
+      country: 'Australia',
+    },
+    {
+      ownerId: owner2.id,
+      title: 'Aspen Wood Cabin',
+      description: 'Charming luxury log cabin with a stone fireplace, billiards room, and outdoor heated jacuzzi.',
+      pricePerNightUsdt: '610.0000',
+      securityDepositUsdt: '700.0000',
+      images: [
+        'https://images.unsplash.com/photo-1542718610-a1d656d1884c?auto=format&fit=crop&w=800&q=80'
+      ],
+      address: 'Red Mountain Roost 88',
+      city: 'Aspen',
+      country: 'USA',
+    },
+    {
+      ownerId: owner1.id,
+      title: 'Cape Town Cliff Villa',
+      description: 'Stunning minimalist villa built directly into the cliffs of Clifton Beach, with heated pool and ocean sunsets.',
+      pricePerNightUsdt: '980.0000',
+      securityDepositUsdt: '1200.0000',
+      images: [
+        'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80'
+      ],
+      address: 'Clifton Victoria Road 104',
+      city: 'Cape Town',
+      country: 'South Africa',
+    },
+    {
+      ownerId: owner2.id,
+      title: 'Barcelona Gothic Loft',
+      description: 'High-ceiling loft with exposed historic brickwork, steel accents, and a private courtyard pool in the Gothic Quarter.',
+      pricePerNightUsdt: '410.0000',
+      securityDepositUsdt: '450.0000',
+      images: [
+        'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80'
+      ],
+      address: 'Carrer dels Banys Nous 7',
+      city: 'Barcelona',
+      country: 'Spain',
+    },
+    {
+      ownerId: owner1.id,
+      title: 'Dubailand Desert Villa',
+      description: 'Ultra-luxury oasis in the Dubai desert featuring sand-dune views, infinity pool, and private falconry displays.',
+      pricePerNightUsdt: '1600.0000',
+      securityDepositUsdt: '2000.0000',
+      images: [
+        'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80'
+      ],
+      address: 'Al Maha Desert Oasis 11',
+      city: 'Dubai',
+      country: 'UAE',
+    },
+    {
+      ownerId: owner2.id,
+      title: 'Vancouver Forest Cabin',
+      description: 'Rustic-chic cabin in the deep woods of British Columbia, with a cedar hot tub and wooden deck over a flowing stream.',
+      pricePerNightUsdt: '340.0000',
+      securityDepositUsdt: '400.0000',
+      images: [
+        'https://images.unsplash.com/photo-1449034446853-66c86144b0ad?auto=format&fit=crop&w=800&q=80'
+      ],
+      address: 'Deep Cove Wilderness Lot 33',
+      city: 'Vancouver',
+      country: 'Canada',
     }
   ];
 
@@ -319,7 +534,7 @@ export async function runDatabaseSeeder() {
     status: 'completed',
   }).returning();
 
-  await db.update(wallets).set({ status: 'cooldown' }).where(eq(wallets.id, poolWallets[2].id));
+  // await db.update(wallets).set({ status: 'cooldown' }).where(eq(wallets.id, poolWallets[2].id));
 
   await db.insert(paymentIntents).values({
     reservationId: res3.id,
@@ -419,7 +634,7 @@ export async function runDatabaseSeeder() {
     status: 'disputed',
   }).returning();
 
-  await db.update(wallets).set({ status: 'cooldown' }).where(eq(wallets.id, poolWallets[3].id));
+  // await db.update(wallets).set({ status: 'cooldown' }).where(eq(wallets.id, poolWallets[3].id));
 
   await db.insert(paymentIntents).values({
     reservationId: res4.id,
@@ -497,6 +712,71 @@ export async function runDatabaseSeeder() {
       { accountPath: `assets:treasury`, amount: '6000.0000', direction: 'credit' },
     ]
   );
+
+  // 10. Seed Neon Auth Users via upstream HTTP API
+  // Neon Auth is a managed proxy — users MUST be registered via its HTTP sign-up
+  // endpoint, not via direct DB inserts. We call the upstream sign-up endpoint for
+  // each test user, then patch the admin role in the local sync table afterwards.
+  console.log('Seeding authentication users via Neon Auth upstream...');
+
+  const neonAuthBaseUrl = process.env.NEON_AUTH_BASE_URL;
+  if (!neonAuthBaseUrl) {
+    console.warn('NEON_AUTH_BASE_URL is not set — skipping auth user seeding.');
+  } else {
+    const testUsers = [
+      { email: 'admin.demo@vytrosti.com',  password: 'Vytr0sti#Admin2024!',  name: 'Admin User'    },
+      { email: 'guest1.demo@vytrosti.com', password: 'Vytr0sti#Guest1!', name: 'Guest User 1'  },
+      { email: 'guest2.demo@vytrosti.com', password: 'Vytr0sti#Guest2!', name: 'Guest User 2'  },
+    ];
+
+    for (const user of testUsers) {
+      try {
+        // Attempt sign-up on the upstream Neon Auth service.
+        // If the user already exists the endpoint returns 422 — we swallow that
+        // so the seed script is safe to re-run.
+        const res = await fetch(`${neonAuthBaseUrl}/sign-up/email`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Origin': 'http://localhost:3000',
+          },
+          body: JSON.stringify({
+            email:       user.email,
+            password:    user.password,
+            name:        user.name,
+            callbackURL: 'http://localhost:3000/',
+          }),
+        });
+
+        const text = await res.text();
+
+        if (res.ok) {
+          console.log(`  ✓ Registered ${user.email} (status ${res.status})`);
+        } else if (res.status === 422 || res.status === 409) {
+          // User already exists — safe to continue
+          console.log(`  ~ ${user.email} already exists upstream (status ${res.status}) — skipping`);
+        } else {
+          console.warn(`  ✗ Failed to register ${user.email}: ${res.status} ${res.statusText} — ${text}`);
+        }
+      } catch (err) {
+        console.warn(`  ✗ Network error registering ${user.email}:`, err);
+      }
+    }
+
+    // Grant admin role to the admin user in the local neon_auth sync table.
+    // The upstream doesn't manage roles — the role column lives only in the local DB.
+    try {
+      await db.execute(sql`
+        UPDATE neon_auth.user SET role = 'admin'
+        WHERE email = 'admin.demo@vytrosti.com'
+      `);
+      console.log('  ✓ Granted admin role to admin.demo@vytrosti.com');
+    } catch (err) {
+      console.warn('  Could not set admin role (user may not have synced yet):', err);
+    }
+
+    console.log('Auth user seeding complete.');
+  }
 
   console.log('Seeding completed successfully!');
 }

@@ -3,8 +3,9 @@
 import React, { useState, useMemo } from 'react';
 import { Button, Input, Card, Alert, TextField, Label, InputGroup } from '@heroui/react';
 import { createBooking } from '@/application/actions/booking';
-import { Calendar, User, ShieldCheck, Calculator, ArrowRight } from 'lucide-react';
+import { Calendar, User, ShieldCheck, Calculator, ArrowRight, LogIn } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { authClient } from '@/infrastructure/auth/client';
 
 interface BookingFormProps {
   listingId: string;
@@ -14,11 +15,15 @@ interface BookingFormProps {
 
 export function BookingForm({ listingId, pricePerNightUsdt, securityDepositUsdt }: BookingFormProps) {
   const router = useRouter();
+  const session = authClient.useSession();
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
   const [tenantPublicKey, setTenantPublicKey] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const isAuthenticated = !!session.data;
+  const isSessionPending = session.isPending;
 
   const priceNum = parseFloat(pricePerNightUsdt);
   const depositNum = parseFloat(securityDepositUsdt);
@@ -174,15 +179,37 @@ export function BookingForm({ listingId, pricePerNightUsdt, securityDepositUsdt 
             </div>
           )}
 
-          <Button
-            type="submit"
-            variant="primary"
-            size="lg"
-            isPending={loading}
-            className="w-full font-bold bg-[#064e3b] text-white flex items-center justify-center gap-1.5 rounded-xl"
-          >
-            Request Reservation <ArrowRight size={18} />
-          </Button>
+          {isSessionPending ? (
+            <Button
+              type="button"
+              variant="primary"
+              size="lg"
+              isPending={true}
+              className="w-full font-bold bg-slate-200 text-slate-500 flex items-center justify-center gap-1.5 rounded-xl"
+            >
+              Checking Auth Status...
+            </Button>
+          ) : !isAuthenticated ? (
+            <Button
+              type="button"
+              variant="primary"
+              size="lg"
+              onClick={() => router.push(`/login?callbackUrl=/listings/${listingId}`)}
+              className="w-full font-bold bg-[#003527] hover:bg-[#064e3b] text-white flex items-center justify-center gap-1.5 rounded-xl h-11"
+            >
+              <LogIn size={18} /> Sign In to Request Reservation
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              isPending={loading}
+              className="w-full font-bold bg-[#064e3b] text-white flex items-center justify-center gap-1.5 rounded-xl"
+            >
+              Request Reservation <ArrowRight size={18} />
+            </Button>
+          )}
         </form>
       </Card.Content>
     </Card>
