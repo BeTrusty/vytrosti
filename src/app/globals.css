@@ -54,6 +54,335 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
+.precision-callout {
+  --callout-accent: #4f46e5;
+  --callout-accent-strong: #4338ca;
+  --callout-accent-soft: #818cf8;
+  --callout-surface: linear-gradient(135deg, rgba(248, 249, 255, 0.98), rgba(238, 242, 255, 0.94));
+  --callout-border: #d9deff;
+  --callout-title: #1d2340;
+  --callout-copy: #475569;
+  --callout-chip-border: #c7d2fe;
+  --callout-chip-bg: rgba(255, 255, 255, 0.84);
+  --callout-chip-text: #4338ca;
+  --callout-meta-bg: rgba(255, 255, 255, 0.7);
+  --callout-meta-border: rgba(255, 255, 255, 0.82);
+  --callout-shadow: 0 12px 30px -24px rgba(67, 56, 202, 0.55);
+  --callout-button: linear-gradient(135deg, #4f46e5, #4338ca);
+  --callout-button-hover: linear-gradient(135deg, #4338ca, #3730a3);
+  overflow: hidden;
+  border-radius: 24px;
+  border: 1px solid var(--callout-border);
+  background: var(--callout-surface);
+  box-shadow: var(--callout-shadow);
+}
+
+.precision-callout--emerald {
+  --callout-accent: #059669;
+  --callout-accent-strong: #047857;
+  --callout-accent-soft: #34d399;
+  --callout-surface: linear-gradient(135deg, rgba(244, 255, 250, 0.98), rgba(233, 250, 242, 0.94));
+  --callout-border: #b9ebd2;
+  --callout-title: #133127;
+  --callout-copy: #496057;
+  --callout-chip-border: #a7f3d0;
+  --callout-chip-bg: rgba(255, 255, 255, 0.84);
+  --callout-chip-text: #047857;
+  --callout-shadow: 0 12px 30px -24px rgba(5, 150, 105, 0.45);
+  --callout-button: linear-gradient(135deg, #059669, #047857);
+  --callout-button-hover: linear-gradient(135deg, #047857, #065f46);
+}
+
+.precision-callout--amber {
+  --callout-accent: #d97706;
+  --callout-accent-strong: #b45309;
+  --callout-accent-soft: #f59e0b;
+  --callout-surface: linear-gradient(135deg, rgba(255, 251, 235, 0.98), rgba(255, 244, 214, 0.95));
+  --callout-border: #f4d39a;
+  --callout-title: #3b2404;
+  --callout-copy: #6b4d23;
+  --callout-chip-border: #fcd34d;
+  --callout-chip-bg: rgba(255, 255, 255, 0.84);
+  --callout-chip-text: #b45309;
+  --callout-shadow: 0 12px 30px -24px rgba(217, 119, 6, 0.42);
+  --callout-button: linear-gradient(135deg, #d97706, #b45309);
+  --callout-button-hover: linear-gradient(135deg, #b45309, #92400e);
+}
+
+.precision-callout__rail {
+  height: 6px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--callout-accent), var(--callout-accent-strong), var(--callout-accent-soft));
+}
+
+.precision-callout__body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+}
+
+.precision-callout__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--callout-accent-strong);
+}
+
+.precision-callout__icon {
+  color: var(--callout-accent-strong);
+  fill: var(--callout-accent-strong);
+}
+
+.precision-callout__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.precision-callout__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.precision-callout__title {
+  color: var(--callout-title);
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.precision-callout__copy {
+  max-width: 34rem;
+  color: var(--callout-copy);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.precision-callout__chip {
+  border: 1px solid var(--callout-chip-border);
+  background: var(--callout-chip-bg);
+  color: var(--callout-chip-text);
+  font-weight: 600;
+}
+
+.precision-callout__meta {
+  display: grid;
+  gap: 8px;
+  border-radius: 16px;
+  border: 1px solid var(--callout-meta-border);
+  background: var(--callout-meta-bg);
+  padding: 12px;
+  font-size: 11px;
+  color: var(--callout-copy);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.precision-callout__meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.precision-callout__meta-row--stacked {
+  align-items: flex-start;
+}
+
+.precision-callout__meta-label {
+  color: #64748b;
+  font-weight: 600;
+}
+
+.precision-callout__meta-value {
+  text-align: right;
+}
+
+.precision-callout__meta-value--strong {
+  color: var(--callout-title);
+  font-weight: 700;
+}
+
+.precision-callout__meta-value--route {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+  font-family: "Geist Mono", "SFMono-Regular", ui-monospace, monospace;
+  font-size: 10px;
+}
+
+.precision-callout__meta-link {
+  color: var(--callout-chip-text);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.precision-callout__meta-link:hover {
+  color: var(--callout-accent-strong);
+  text-decoration: underline;
+}
+
+.precision-callout__meta-arrow {
+  color: #94a3b8;
+}
+
+.precision-callout__action {
+  height: 48px;
+  width: 100%;
+  border: none;
+  border-radius: 18px;
+  background: var(--callout-button);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+  box-shadow: 0 18px 30px -18px color-mix(in srgb, var(--callout-accent) 70%, transparent);
+  transition: transform 0.2s ease, filter 0.2s ease, background 0.2s ease;
+}
+
+.precision-callout__action:hover {
+  transform: translateY(-2px);
+  background: var(--callout-button-hover);
+  filter: saturate(1.05);
+}
+
+.precision-callout__action[data-hover="false"] {
+  transform: none;
+  filter: none;
+}
+
+.funds-trace-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #f4d39a;
+  background:
+    linear-gradient(180deg, rgba(255, 252, 244, 0.98), rgba(255, 247, 232, 0.95)),
+    radial-gradient(circle at top right, rgba(217, 119, 6, 0.16), transparent 34%);
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.03),
+    0 18px 44px -34px rgba(180, 83, 9, 0.34);
+}
+
+.funds-trace-card__grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+  background-size: 100% 36px, 36px 100%;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.45), transparent 95%);
+  pointer-events: none;
+}
+
+.funds-trace-card__eyebrow {
+  display: inline-flex;
+  width: fit-content;
+  border-radius: 999px;
+  border: 1px solid #dbe3f5;
+  background: rgba(255, 255, 255, 0.75);
+  padding: 0.45rem 0.75rem;
+  font-family: "Geist Mono", "SFMono-Regular", ui-monospace, monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #466173;
+}
+
+.funds-trace-card__actor {
+  border: 1px solid rgba(219, 227, 245, 0.95);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.78);
+  padding: 1rem;
+  backdrop-filter: blur(10px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.funds-trace-card__actor--guest {
+  border-color: rgba(167, 243, 208, 0.95);
+  background: linear-gradient(180deg, rgba(244, 255, 250, 0.92), rgba(236, 253, 245, 0.8));
+}
+
+.funds-trace-card__actor--platform {
+  border-color: rgba(252, 211, 77, 0.95);
+  background: linear-gradient(180deg, rgba(255, 251, 235, 0.95), rgba(255, 247, 237, 0.84));
+}
+
+.funds-trace-card__actor--owner {
+  border-color: rgba(186, 230, 253, 0.95);
+  background: linear-gradient(180deg, rgba(240, 249, 255, 0.95), rgba(239, 246, 255, 0.84));
+}
+
+.funds-trace-card__actor--escrow {
+  border-color: rgba(254, 205, 211, 0.95);
+  background: linear-gradient(180deg, rgba(255, 241, 242, 0.95), rgba(255, 245, 245, 0.84));
+}
+
+.funds-trace-card__actor--intake {
+  border-color: rgba(226, 232, 240, 0.95);
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.84));
+}
+
+.funds-trace-card__event {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+}
+
+.funds-trace-card__event-marker {
+  display: flex;
+  height: 2.25rem;
+  width: 2.25rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid #d8deed;
+  background: #ffffff;
+  font-family: "Geist Mono", "SFMono-Regular", ui-monospace, monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  box-shadow: 0 10px 24px -18px rgba(15, 23, 42, 0.4);
+}
+
+.funds-trace-card__event-marker--done {
+  border-color: #86efac;
+  color: #047857;
+  background: linear-gradient(180deg, #ffffff, #ecfdf5);
+}
+
+.funds-trace-card__event-marker--current {
+  border-color: #fcd34d;
+  color: #b45309;
+  background: linear-gradient(180deg, #ffffff, #fffbeb);
+}
+
+.funds-trace-card__event-marker--alert {
+  border-color: #fda4af;
+  color: #be123c;
+  background: linear-gradient(180deg, #ffffff, #fff1f2);
+}
+
+@media (max-width: 767px) {
+  .funds-trace-card__event {
+    gap: 0.75rem;
+  }
+
+  .funds-trace-card__event-marker {
+    height: 2rem;
+    width: 2rem;
+    font-size: 0.7rem;
+  }
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

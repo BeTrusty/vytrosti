@@ -4,6 +4,7 @@ import { Button } from '@heroui/react';
 import Link from 'next/link';
 import { Sparkles, Compass } from 'lucide-react';
 import { ListingsExplorer } from '@/presentation/components/ListingsExplorer';
+import { auth } from '@/infrastructure/auth/server';
 
 export const revalidate = 0; // Dynamic rendering
 
@@ -51,6 +52,9 @@ const STATIC_FALLBACK_LISTINGS = [
 ];
 
 export default async function HomePage() {
+  const sessionResponse = await auth.getSession();
+  const session = sessionResponse && 'data' in sessionResponse ? sessionResponse.data : null;
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let propertyListings: any[] = [];
   try {
@@ -73,7 +77,7 @@ export default async function HomePage() {
           <span className="text-[#064e3b]">pay with stability.</span>
         </h1>
         <p className="text-base md:text-lg text-slate-500 max-w-2xl leading-relaxed">
-          Luxury vacation rentals secured by the Vitrosti Protocol. Middle-term stays, settled in USDT over Stellar, with security deposits locked in decentralized smart contracts via Trustless Work.
+          Luxury vacation rentals secured by the Vitrosti Protocol. Middle-term stays, settled in USDC over Stellar, with security deposits locked in decentralized smart contracts via Trustless Work.
         </p>
         <div className="flex gap-4 mt-2">
           <Link href="#explore">
@@ -81,6 +85,13 @@ export default async function HomePage() {
               Explore Stays
             </Button>
           </Link>
+          {session && (
+            <Link href="/reservations">
+              <Button className="border border-[#d6ddff] bg-[#f8faff] text-[#064e3b] font-semibold rounded-xl" size="lg">
+                My Reservations
+              </Button>
+            </Link>
+          )}
           <Link href="/admin">
             <Button className="border border-[#eaedff] bg-white text-slate-700 font-semibold rounded-xl" size="lg">
               Admin Portal

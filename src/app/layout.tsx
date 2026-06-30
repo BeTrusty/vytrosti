@@ -16,16 +16,48 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const trustlessBaseURL =
+    process.env.TRUSTLESS_API_URL === 'https://api.trustlesswork.com'
+      ? 'https://api.trustlesswork.com'
+      : 'https://dev.api.trustlesswork.com';
+  const trustlessApiKey = process.env.NEXT_PUBLIC_TRUSTLESS_API_KEY || process.env.TRUSTLESS_API_KEY || '';
+
   return (
     <html lang="en" className="light">
       <body className={`${inter.className} min-h-screen flex flex-col`}>
-        <Providers>
+        <Providers
+          trustlessConfig={{
+            apiKey: trustlessApiKey,
+            baseURL: trustlessBaseURL,
+          }}
+        >
           <Navigation />
           <main className="flex-grow flex flex-col">
             {children}
           </main>
           <footer className="border-t border-[#eaedff] bg-white py-6 text-center text-xs text-slate-500">
-            &copy; {new Date().getFullYear()} Vytrosti. Built for Stellar Hackathon.
+            <span>&copy; {new Date().getFullYear()} Vytrosti.</span>{' '}
+            <span>
+              by{' '}
+              <a
+                href="https://trustlesswork.com"
+                target="_blank"
+                rel="noreferrer"
+                className="font-semibold text-slate-700 transition hover:text-[#003527]"
+              >
+                Trustless
+              </a>{' '}
+              y{' '}
+              <a
+                href="https://betrusty.io"
+                target="_blank"
+                rel="noreferrer"
+                className="font-semibold text-slate-700 transition hover:text-[#003527]"
+              >
+                BeTrusty
+              </a>
+              .
+            </span>
           </footer>
         </Providers>
       </body>

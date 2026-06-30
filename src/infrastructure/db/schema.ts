@@ -10,7 +10,8 @@ export const reservationStatusEnum = pgEnum('reservation_status', [
   'active',
   'completed',
   'cancelled',
-  'disputed'
+  'disputed',
+  'checking_out'
 ]);
 export const paymentIntentStatusEnum = pgEnum('payment_intent_status', ['pending', 'paid', 'expired']);
 export const escrowStatusEnum = pgEnum('escrow_status', ['pending', 'funded', 'released', 'disputed', 'resolved', 'refunded']);
@@ -69,7 +70,8 @@ export const reservations = pgTable('reservations', {
   subtotalUsdt: numeric('subtotal_usdt', { precision: 18, scale: 4 }).notNull(),
   securityDepositUsdt: numeric('security_deposit_usdt', { precision: 18, scale: 4 }).notNull(),
   platformFeeUsdt: numeric('platform_fee_usdt', { precision: 18, scale: 4 }).notNull(),
-  status: text('status').$type<'pending_payment' | 'paid' | 'escrowed' | 'active' | 'completed' | 'cancelled' | 'disputed'>().default('pending_payment').notNull(),
+  status: text('status').$type<'pending_payment' | 'paid' | 'escrowed' | 'active' | 'completed' | 'cancelled' | 'disputed' | 'checking_out'>().default('pending_payment').notNull(),
+  checkoutClaimedAt: timestamp('checkout_claimed_at'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
@@ -184,6 +186,15 @@ export const blockchainTransactions = pgTable('blockchain_transactions', {
   toAddress: text('to_address').notNull(),
   ledgerCursor: text('ledger_cursor').notNull(),
   processedAt: timestamp('processed_at').defaultNow().notNull(),
+});
+
+
+// 15. System Config
+export const systemConfigs = pgTable('system_configs', {
+  key: text('key').primaryKey(),
+  value: text('value').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
 // Relations

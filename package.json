@@ -17,6 +17,7 @@
     "@heroui/react": "^3.2.1",
     "@neondatabase/auth": "^0.4.2-beta",
     "@stellar/stellar-sdk": "^16.0.1",
+    "@trustless-work/escrow": "^3.0.5",
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
     "framer-motion": "^12.42.0",

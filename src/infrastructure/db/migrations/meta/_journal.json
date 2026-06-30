@@ -15,6 +15,20 @@
       "when": 1782421207962,
       "tag": "0001_thankful_darkhawk",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1782751776233,
+      "tag": "0002_amusing_mantis",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1782782792738,
+      "tag": "0003_tricky_killraven",
+      "breakpoints": true
     }
   ]
 }

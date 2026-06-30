@@ -15,7 +15,7 @@ An Escrow represents a security deposit held using Trustless Work's decentralize
 ## State Transitions
 - **pending**: Escrow configuration prepared but not yet funded.
 - **funded**: Escrow contract verified funded on-chain.
-- **released**: Funds released back to the Tenant after checkout.
-- **disputed**: Escalation filed by Owner or Tenant.
+- **released**: Funds released back to the Tenant after checkout (either approved by Host or auto-released after review window expiration).
+- **disputed**: Escalation filed by Owner within the 72-hour review window.
 - **resolved**: Dispute arbitrated, funds split or fully awarded.
 - **refunded**: Booking cancelled before check-in, deposit returned.

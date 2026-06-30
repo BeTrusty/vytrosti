@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Button, Input, Card, Alert, TextField, Label, InputGroup } from '@heroui/react';
+import { Button, Input, Card, Alert, TextField, Label } from '@heroui/react';
 import { createBooking } from '@/application/actions/booking';
-import { Calendar, User, ShieldCheck, Calculator, ArrowRight, LogIn } from 'lucide-react';
+import { ShieldCheck, Calculator, ArrowRight, LogIn } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { authClient } from '@/infrastructure/auth/client';
 
@@ -18,12 +18,12 @@ export function BookingForm({ listingId, pricePerNightUsdt, securityDepositUsdt 
   const session = authClient.useSession();
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
-  const [tenantPublicKey, setTenantPublicKey] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const isAuthenticated = !!session.data;
   const isSessionPending = session.isPending;
+  const isAdminUser = session.data?.user?.role === 'admin';
 
   const priceNum = parseFloat(pricePerNightUsdt);
   const depositNum = parseFloat(securityDepositUsdt);
@@ -40,31 +40,27 @@ export function BookingForm({ listingId, pricePerNightUsdt, securityDepositUsdt 
     
     const rentSubtotal = priceNum * nights;
     const platformFee = rentSubtotal * 0.05; // 5% fee
-    const total = rentSubtotal + depositNum + platformFee;
+    const firstPayment = rentSubtotal + platformFee;
+    const totalCommitment = firstPayment + depositNum;
 
     return {
       nights,
       rentSubtotal,
       platformFee,
+      firstPayment,
       deposit: depositNum,
-      total,
+      totalCommitment,
     };
   }, [checkIn, checkOut, priceNum, depositNum]);
 
-  // Quick generation helper for test flows (hackathon convenience)
-  const handleMockWalletGenerate = () => {
-    // Generate a random-looking Stellar public key for mock convenience
-    const mockChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
-    let mockKey = 'G';
-    for (let i = 0; i < 55; i++) {
-      mockKey += mockChars.charAt(Math.floor(Math.random() * mockChars.length));
-    }
-    setTenantPublicKey(mockKey);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!checkIn || !checkOut || !tenantPublicKey) {
+    if (isAdminUser) {
+      setError('Admin accounts cannot request reservations. Switch to a guest account to continue.');
+      return;
+    }
+
+    if (!checkIn || !checkOut) {
       setError('Please fill in all details');
       return;
     }
@@ -76,7 +72,6 @@ export function BookingForm({ listingId, pricePerNightUsdt, securityDepositUsdt 
       listingId,
       checkInStr: checkIn,
       checkOutStr: checkOut,
-      tenantPublicKey,
     });
 
     setLoading(false);
@@ -94,12 +89,20 @@ export function BookingForm({ listingId, pricePerNightUsdt, securityDepositUsdt 
           <h3 className="text-xl font-bold text-[#131b2e] flex items-center gap-2">
             <Calculator className="text-[#064e3b]" size={20} /> Reserve Property
           </h3>
-          <p className="text-slate-500 text-xs mt-1">Specify dates and guest account to generate payment details.</p>
+          <p className="text-slate-500 text-xs mt-1">Specify dates to request reservation details.</p>
         </div>
 
         {error && (
           <Alert status="danger" title="Error">
             <Alert.Description>{error}</Alert.Description>
+          </Alert>
+        )}
+
+        {isAdminUser && (
+          <Alert status="warning" title="Reservations Unavailable">
+            <Alert.Description>
+              Admin accounts cannot request reservations. Sign in with a guest account to continue.
+            </Alert.Description>
           </Alert>
         )}
 
@@ -111,6 +114,7 @@ export function BookingForm({ listingId, pricePerNightUsdt, securityDepositUsdt 
                 type="date"
                 value={checkIn}
                 onChange={(e) => setCheckIn(e.target.value)}
+                isDisabled={isAdminUser}
                 required
                 className="bg-[#f2f3ff] border border-[#eaedff] focus-within:border-[#064e3b] rounded-xl px-3 py-2 w-full text-sm"
               />
@@ -121,37 +125,10 @@ export function BookingForm({ listingId, pricePerNightUsdt, securityDepositUsdt 
                 type="date"
                 value={checkOut}
                 onChange={(e) => setCheckOut(e.target.value)}
+                isDisabled={isAdminUser}
                 required
                 className="bg-[#f2f3ff] border border-[#eaedff] focus-within:border-[#064e3b] rounded-xl px-3 py-2 w-full text-sm"
               />
-            </TextField>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <TextField className="w-full flex flex-col gap-1">
-              <div className="flex justify-between items-center">
-                <Label className="text-sm font-semibold text-slate-700">Your Stellar Account Address</Label>
-                <button 
-                  type="button" 
-                  onClick={handleMockWalletGenerate}
-                  className="text-xs text-[#064e3b] hover:text-[#003527] font-semibold"
-                >
-                  Generate Mock Account
-                </button>
-              </div>
-              <InputGroup className="bg-[#f2f3ff] border border-[#eaedff] focus-within:border-[#064e3b] rounded-xl flex items-center px-3 py-2">
-                <InputGroup.Prefix className="mr-2">
-                  <User size={16} className="text-slate-400" />
-                </InputGroup.Prefix>
-                <Input
-                  type="text"
-                  placeholder="G..."
-                  value={tenantPublicKey}
-                  onChange={(e) => setTenantPublicKey(e.target.value)}
-                  required
-                  className="w-full text-sm bg-transparent outline-none border-none"
-                />
-              </InputGroup>
             </TextField>
           </div>
 
@@ -162,19 +139,26 @@ export function BookingForm({ listingId, pricePerNightUsdt, securityDepositUsdt 
               </span>
               <div className="flex justify-between">
                 <span className="text-slate-500">Rent Subtotal</span>
-                <span className="text-slate-800">{pricingBreakdown.rentSubtotal.toFixed(2)} USDT</span>
+                <span className="text-slate-800">{pricingBreakdown.rentSubtotal.toFixed(2)} USDC</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Security Deposit (Refundable)</span>
-                <span className="text-slate-800">{pricingBreakdown.deposit.toFixed(2)} USDT</span>
+                <span className="text-slate-800">{pricingBreakdown.deposit.toFixed(2)} USDC</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Platform Fee (5%)</span>
-                <span className="text-slate-800">{pricingBreakdown.platformFee.toFixed(2)} USDT</span>
+                <span className="text-slate-800">{pricingBreakdown.platformFee.toFixed(2)} USDC</span>
               </div>
               <div className="flex justify-between border-t border-[#eaedff] pt-2 font-bold text-[#131b2e] text-base">
-                <span>Total Due</span>
-                <span className="text-[#064e3b]">{pricingBreakdown.total.toFixed(2)} USDT</span>
+                <span>First Payment</span>
+                <span className="text-[#064e3b]">{pricingBreakdown.firstPayment.toFixed(2)} USDC</span>
+              </div>
+              <div className="rounded-xl bg-white/70 px-3 py-2 text-xs text-slate-500 leading-relaxed">
+                Deposit shown for reference only. It is secured separately in escrow and is not included in the first payment.
+              </div>
+              <div className="flex justify-between text-xs font-semibold text-slate-600">
+                <span>Total Commitment</span>
+                <span>{pricingBreakdown.totalCommitment.toFixed(2)} USDC</span>
               </div>
             </div>
           )}
@@ -198,6 +182,16 @@ export function BookingForm({ listingId, pricePerNightUsdt, securityDepositUsdt 
               className="w-full font-bold bg-[#003527] hover:bg-[#064e3b] text-white flex items-center justify-center gap-1.5 rounded-xl h-11"
             >
               <LogIn size={18} /> Sign In to Request Reservation
+            </Button>
+          ) : isAdminUser ? (
+            <Button
+              type="button"
+              variant="secondary"
+              size="lg"
+              isDisabled={true}
+              className="w-full font-bold bg-slate-200 text-slate-500 flex items-center justify-center gap-1.5 rounded-xl h-11"
+            >
+              Reservation Disabled for Admin
             </Button>
           ) : (
             <Button

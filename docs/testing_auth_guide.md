@@ -82,9 +82,13 @@ Therefore, the seeder script executes the following steps:
 4. Click **Quick Fill** on either **Guest Tenant 1** or **Guest Tenant 2**, then click **Sign In**.
 5. You will be redirected back to the listing detail page.
 6. The booking form will now show the standard **"Request Reservation"** submit button.
-7. Fill in the check-in/check-out dates and click **Request Reservation**. The reservation will be created successfully and you will be redirected to the `/reservations/[id]` detail page.
-8. Look at the navbar: your guest email will be displayed, and a **"Log Out"** button will be available.
-9. Try going to `/admin` as a guest; verify you are redirected back to the login page because your role is not `admin`.
+7. Fill in the check-in/check-out dates and verify the summary shows:
+   - a separate **Security Deposit** line,
+   - a **First Payment** amount that excludes the deposit,
+   - and that the reservation detail page later shows the same deposit amount separately from the first payment commitment.
+8. Click **Request Reservation**. The reservation will be created successfully and you will be redirected to the `/reservations/[id]` detail page.
+9. Look at the navbar: your guest email will be displayed, and a **"Log Out"** button will be available.
+10. Try going to `/admin` as a guest; verify you are redirected back to the login page because your role is not `admin`.
 
 ### Scenario C: Admin Access to Portal
 1. Click **Log Out** in the navbar.
@@ -98,4 +102,5 @@ Therefore, the seeder script executes the following steps:
 1. As a logged-in guest user, navigate to an active reservation page (e.g. `/reservations/[id]`).
 2. When a Stellar payment has been made but not yet processed automatically, click the **"Verify Payment"** button.
 3. This action triggers the backend `verifyPaymentStatus` action, which manually queries/polls the Stellar ledger scanner (`pollPayments`).
-4. Once verified, the interface will update the status of the reservation immediately to reflect that the payment has been detected and updated to `paid`.
+4. Once verified, the interface will update the status of the reservation immediately to reflect that the first payment has been detected and updated to `paid`.
+5. Confirm the amount requested in the payment portal equals `rent + platform fee`, and that the security deposit is still shown separately as an escrow follow-up amount.

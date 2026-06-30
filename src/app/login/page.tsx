@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState, Suspense } from 'react';
-import { Button, Input, Card, Alert, TextField, Label } from '@heroui/react';
+import { Button, Input, Card, Alert, TextField, Label, Chip } from '@heroui/react';
 import { authClient } from '@/infrastructure/auth/client';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { LogIn, Mail, Lock, ShieldAlert, CheckCircle, Info } from 'lucide-react';
+import { LogIn, Mail, Lock, Info } from 'lucide-react';
 
 function LoginForm() {
   const router = useRouter();
@@ -33,7 +33,7 @@ function LoginForm() {
         router.push(callbackUrl);
         router.refresh();
       }
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
@@ -104,64 +104,85 @@ function LoginForm() {
           </form>
 
           {/* Test Users Credentials */}
-          <div className="border-t border-[#eaedff] pt-5 flex flex-col gap-3">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-[#003527] uppercase tracking-wider">
-              <Info size={14} className="text-[#064e3b]" /> Test Account Coordinates
-            </div>
-            
-            <div className="flex flex-col gap-2">
-              {/* Admin */}
-              <div className="bg-[#eaedff]/30 border border-[#eaedff] rounded-2xl p-3 flex justify-between items-center text-xs">
-                <div className="flex flex-col gap-0.5">
-                  <span className="font-bold text-[#131b2e] flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> Admin Portal User
+          <div className="precision-callout precision-callout--amber">
+            <div className="precision-callout__rail" />
+            <div className="precision-callout__body">
+              <div className="precision-callout__header">
+                <div className="precision-callout__intro">
+                  <span className="precision-callout__eyebrow">
+                    <Info size={14} className="precision-callout__icon" />
+                    Test access
                   </span>
-                  <span className="text-slate-500">admin.demo@vytrosti.com</span>
-                  <span className="text-slate-400 font-mono">Vytr0sti#Admin2024!</span>
+                  <h3 className="precision-callout__title">Demo accounts</h3>
+                  <p className="precision-callout__copy">
+                    Use quick fill to load a review account instantly.
+                  </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleQuickFill('admin.demo@vytrosti.com', 'Vytr0sti#Admin2024!')}
-                  className="text-xs font-semibold bg-[#eaedff] text-[#003527] hover:bg-[#d6dbff] px-2.5 py-1 rounded-lg transition-colors"
-                >
-                  Quick Fill
-                </button>
+                <Chip size="sm" variant="flat" className="precision-callout__chip">
+                  Demo
+                </Chip>
               </div>
 
-              {/* Guest 1 */}
-              <div className="bg-[#eaedff]/30 border border-[#eaedff] rounded-2xl p-3 flex justify-between items-center text-xs">
-                <div className="flex flex-col gap-0.5">
-                  <span className="font-bold text-[#131b2e] flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Guest Tenant 1
-                  </span>
-                  <span className="text-slate-500">guest1.demo@vytrosti.com</span>
-                  <span className="text-slate-400 font-mono">Vytr0sti#Guest1!</span>
+              <div className="flex flex-col gap-2">
+                <div className="precision-callout__meta">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex flex-col gap-0.5">
+                      <span className="font-bold text-[#131b2e] flex items-center gap-1.5">
+                        <span className="h-1.5 w-1.5 rounded-full bg-indigo-500" />
+                        Admin portal user
+                      </span>
+                      <span className="text-slate-500">admin.demo@vytrosti.com</span>
+                      <span className="font-mono text-slate-400">Vytr0sti#Admin2024!</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleQuickFill('admin.demo@vytrosti.com', 'Vytr0sti#Admin2024!')}
+                      className="rounded-lg border border-amber-200 bg-white/90 px-3 py-1.5 text-xs font-semibold text-[#7c3f05] transition-colors hover:bg-white"
+                    >
+                      Quick Fill
+                    </button>
+                  </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleQuickFill('guest1.demo@vytrosti.com', 'Vytr0sti#Guest1!')}
-                  className="text-xs font-semibold bg-[#eaedff] text-[#003527] hover:bg-[#d6dbff] px-2.5 py-1 rounded-lg transition-colors"
-                >
-                  Quick Fill
-                </button>
-              </div>
 
-              {/* Guest 2 */}
-              <div className="bg-[#eaedff]/30 border border-[#eaedff] rounded-2xl p-3 flex justify-between items-center text-xs">
-                <div className="flex flex-col gap-0.5">
-                  <span className="font-bold text-[#131b2e] flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Guest Tenant 2
-                  </span>
-                  <span className="text-slate-500">guest2.demo@vytrosti.com</span>
-                  <span className="text-slate-400 font-mono">Vytr0sti#Guest2!</span>
+                <div className="precision-callout__meta">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex flex-col gap-0.5">
+                      <span className="font-bold text-[#131b2e] flex items-center gap-1.5">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                        Guest tenant 1
+                      </span>
+                      <span className="text-slate-500">guest1.demo@vytrosti.com</span>
+                      <span className="font-mono text-slate-400">Vytr0sti#Guest1!</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleQuickFill('guest1.demo@vytrosti.com', 'Vytr0sti#Guest1!')}
+                      className="rounded-lg border border-amber-200 bg-white/90 px-3 py-1.5 text-xs font-semibold text-[#7c3f05] transition-colors hover:bg-white"
+                    >
+                      Quick Fill
+                    </button>
+                  </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleQuickFill('guest2.demo@vytrosti.com', 'Vytr0sti#Guest2!')}
-                  className="text-xs font-semibold bg-[#eaedff] text-[#003527] hover:bg-[#d6dbff] px-2.5 py-1 rounded-lg transition-colors"
-                >
-                  Quick Fill
-                </button>
+
+                <div className="precision-callout__meta">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex flex-col gap-0.5">
+                      <span className="font-bold text-[#131b2e] flex items-center gap-1.5">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                        Guest tenant 2
+                      </span>
+                      <span className="text-slate-500">guest2.demo@vytrosti.com</span>
+                      <span className="font-mono text-slate-400">Vytr0sti#Guest2!</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleQuickFill('guest2.demo@vytrosti.com', 'Vytr0sti#Guest2!')}
+                      className="rounded-lg border border-amber-200 bg-white/90 px-3 py-1.5 text-xs font-semibold text-[#7c3f05] transition-colors hover:bg-white"
+                    >
+                      Quick Fill
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

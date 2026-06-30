@@ -14,6 +14,14 @@ export interface StellarTransaction {
   createdAt: string;
 }
 
+export interface StellarAssetReadiness {
+  publicKey: string;
+  exists: boolean;
+  hasTrustline: boolean;
+  assetCode: string;
+  assetIssuer: string;
+}
+
 export class StellarProvider {
   private server: StellarSdk.Horizon.Server | null = null;
   private isMock: boolean;
@@ -51,19 +59,19 @@ export class StellarProvider {
       }
 
       const response = await query.call();
-      const usdtCode = process.env.STELLAR_USDT_ASSET_CODE || 'USDT';
-      const usdtIssuer = process.env.STELLAR_USDT_ASSET_ISSUER || '';
+      const usdcCode = process.env.STELLAR_USDC_ASSET_CODE || 'USDC';
+      const usdcIssuer = process.env.STELLAR_USDC_ASSET_ISSUER || '';
 
       const txs: StellarTransaction[] = [];
       for (const op of response.records) {
         // We only care about payments (payment operations)
         if (op.type === 'payment') {
           const paymentOp = op as StellarSdk.Horizon.ServerApi.PaymentOperationRecord;
-          // Filter by USDT asset code & issuer (if defined)
-          const isUsdt = paymentOp.asset_code === usdtCode && 
-            (!usdtIssuer || paymentOp.asset_issuer === usdtIssuer);
+          // Filter by USDC asset code & issuer (if defined)
+          const isUsdc = paymentOp.asset_code === usdcCode && 
+            (!usdcIssuer || paymentOp.asset_issuer === usdcIssuer);
 
-          if (isUsdt) {
+          if (isUsdc) {
             txs.push({
               id: paymentOp.paging_token,
               txHash: paymentOp.transaction_hash,
@@ -84,10 +92,10 @@ export class StellarProvider {
     }
   }
 
-  // Send USDT payment
-  async sendUsdt(secretKey: string, destination: string, amount: string): Promise<string> {
+  // Send USDC payment
+  async sendUsdc(secretKey: string, destination: string, amount: string): Promise<string> {
     if (this.isMock) {
-      console.log(`[MOCK STELLAR] Sent ${amount} USDT from S... to ${destination}`);
+      console.log(`[MOCK STELLAR] Sent ${amount} USDC from S... to ${destination}`);
       return 'mock_tx_hash_' + Math.random().toString(36).substring(2, 15);
     }
 
@@ -97,11 +105,11 @@ export class StellarProvider {
       const sourceKeypair = StellarSdk.Keypair.fromSecret(secretKey);
       const sourceAcc = await this.server.loadAccount(sourceKeypair.publicKey());
 
-      const usdtCode = process.env.STELLAR_USDT_ASSET_CODE || 'USDT';
-      const usdtIssuer = process.env.STELLAR_USDT_ASSET_ISSUER;
-      if (!usdtIssuer) throw new Error('STELLAR_USDT_ASSET_ISSUER environment variable is required for real operations');
+      const usdcCode = process.env.STELLAR_USDC_ASSET_CODE || 'USDC';
+      const usdcIssuer = process.env.STELLAR_USDC_ASSET_ISSUER;
+      if (!usdcIssuer) throw new Error('STELLAR_USDC_ASSET_ISSUER environment variable is required for real operations');
 
-      const usdtAsset = new StellarSdk.Asset(usdtCode, usdtIssuer);
+      const usdcAsset = new StellarSdk.Asset(usdcCode, usdcIssuer);
 
       const networkPassphrase = process.env.STELLAR_NETWORK === 'public' 
         ? StellarSdk.Networks.PUBLIC 
@@ -114,7 +122,7 @@ export class StellarProvider {
         .addOperation(
           StellarSdk.Operation.payment({
             destination,
-            asset: usdtAsset,
+            asset: usdcAsset,
             amount,
           })
         )
@@ -125,13 +133,13 @@ export class StellarProvider {
       const result = await this.server.submitTransaction(transaction);
       return result.hash;
     } catch (error) {
-      console.error('Stellar sendUsdt transfer failed:', error);
+      console.error('Stellar sendUsdc transfer failed:', error);
       throw error;
     }
   }
 
-  // Create trustline for USDT on a pool wallet
-  async establishUsdtTrustline(secretKey: string): Promise<string> {
+  // Create trustline for USDC on a pool wallet
+  async establishUsdcTrustline(secretKey: string): Promise<string> {
     if (this.isMock) {
       return 'mock_trustline_tx_hash';
     }
@@ -142,11 +150,11 @@ export class StellarProvider {
       const sourceKeypair = StellarSdk.Keypair.fromSecret(secretKey);
       const sourceAcc = await this.server.loadAccount(sourceKeypair.publicKey());
 
-      const usdtCode = process.env.STELLAR_USDT_ASSET_CODE || 'USDT';
-      const usdtIssuer = process.env.STELLAR_USDT_ASSET_ISSUER;
-      if (!usdtIssuer) throw new Error('STELLAR_USDT_ASSET_ISSUER is required');
+      const usdcCode = process.env.STELLAR_USDC_ASSET_CODE || 'USDC';
+      const usdcIssuer = process.env.STELLAR_USDC_ASSET_ISSUER;
+      if (!usdcIssuer) throw new Error('STELLAR_USDC_ASSET_ISSUER is required');
 
-      const usdtAsset = new StellarSdk.Asset(usdtCode, usdtIssuer);
+      const usdcAsset = new StellarSdk.Asset(usdcCode, usdcIssuer);
       const networkPassphrase = process.env.STELLAR_NETWORK === 'public' 
         ? StellarSdk.Networks.PUBLIC 
         : StellarSdk.Networks.TESTNET;
@@ -157,7 +165,7 @@ export class StellarProvider {
       })
         .addOperation(
           StellarSdk.Operation.changeTrust({
-            asset: usdtAsset,
+            asset: usdcAsset,
           })
         )
         .setTimeout(30)
@@ -167,7 +175,7 @@ export class StellarProvider {
       const result = await this.server.submitTransaction(transaction);
       return result.hash;
     } catch (error) {
-      console.error('Stellar establishUsdtTrustline failed:', error);
+      console.error('Stellar establishUsdcTrustline failed:', error);
       throw error;
     }
   }
@@ -192,13 +200,75 @@ export class StellarProvider {
       walletId,
       txHash,
       amount,
-      assetCode: process.env.STELLAR_USDT_ASSET_CODE || 'USDT',
+      assetCode: process.env.STELLAR_USDC_ASSET_CODE || 'USDC',
       fromAddress,
       toAddress: wallet.publicKey,
       ledgerCursor: mockCursor,
     });
 
     return txHash;
+  }
+
+  async getAssetReadiness(publicKey: string): Promise<StellarAssetReadiness> {
+    const assetCode = process.env.STELLAR_USDC_ASSET_CODE || 'USDC';
+    const assetIssuer = process.env.STELLAR_USDC_ASSET_ISSUER || '';
+
+    if (this.isMock) {
+      return {
+        publicKey,
+        exists: true,
+        hasTrustline: true,
+        assetCode,
+        assetIssuer,
+      };
+    }
+
+    if (!this.server) throw new Error('Horizon server not initialized');
+    if (!assetIssuer) throw new Error('STELLAR_USDC_ASSET_ISSUER is required');
+
+    try {
+      const account = await this.server.loadAccount(publicKey);
+      const hasTrustline = account.balances.some(
+        (balance) =>
+          balance.asset_type !== 'native' &&
+          'asset_code' in balance &&
+          balance.asset_code === assetCode &&
+          'asset_issuer' in balance &&
+          balance.asset_issuer === assetIssuer
+      );
+
+      return {
+        publicKey,
+        exists: true,
+        hasTrustline,
+        assetCode,
+        assetIssuer,
+      };
+    } catch (error) {
+      const horizonError = error as {
+        response?: {
+          status?: number;
+          type?: string;
+        };
+      };
+
+      const isMissingAccount =
+        horizonError?.response?.status === 404 ||
+        horizonError?.response?.type === 'https://stellar.org/horizon-errors/not_found';
+
+      if (isMissingAccount) {
+        return {
+          publicKey,
+          exists: false,
+          hasTrustline: false,
+          assetCode,
+          assetIssuer,
+        };
+      }
+
+      console.error(`Failed to inspect asset readiness for account ${publicKey}:`, error);
+      throw error;
+    }
   }
 }
 

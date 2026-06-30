@@ -1,15 +1,19 @@
 'use server';
 
 import { db } from '@/infrastructure/db/client';
-import { listings, reservations, tenants, escrows, disputes, users, ledgerAccounts } from '@/infrastructure/db/schema';
+import { listings, reservations, tenants, users, ledgerAccounts, paymentIntents, systemConfigs, wallets } from '@/infrastructure/db/schema';
 import { eq } from 'drizzle-orm';
 import { walletPoolService } from '../services/wallet-pool';
 import { ledgerService } from '../services/ledger';
-import { trustlessProvider } from '@/infrastructure/trustless/provider';
 import { stellarProvider } from '@/infrastructure/stellar/provider';
 import { revalidatePath } from 'next/cache';
 import { paymentPoller } from '../services/poller';
 import { auth } from '@/infrastructure/auth/server';
+import {
+  createReservationDispute,
+  requestReservationCheckout,
+  settleReservationCheckout,
+} from '../services/reservation-workflow';
 
 export interface BookingResponse {
   success: boolean;
@@ -22,7 +26,7 @@ export async function createBooking(formData: {
   listingId: string;
   checkInStr: string;
   checkOutStr: string;
-  tenantPublicKey: string;
+  tenantPublicKey?: string;
 }): Promise<BookingResponse> {
   try {
     const sessionResponse = await auth.getSession();
@@ -30,10 +34,13 @@ export async function createBooking(formData: {
     if (!session) {
       return { success: false, error: 'You must be authenticated to create a reservation.' };
     }
+    if (session.user.role === 'admin') {
+      return { success: false, error: 'Admin accounts cannot create reservations.' };
+    }
 
     const { listingId, checkInStr, checkOutStr, tenantPublicKey } = formData;
 
-    if (!listingId || !checkInStr || !checkOutStr || !tenantPublicKey) {
+    if (!listingId || !checkInStr || !checkOutStr) {
       return { success: false, error: 'All fields are required' };
     }
 
@@ -67,7 +74,7 @@ export async function createBooking(formData: {
     const subtotal = pricePerNight * nights;
     const securityDeposit = parseFloat(listing.securityDepositUsdt);
     const platformFee = subtotal * 0.05; // 5% fee
-    const totalAmount = subtotal + securityDeposit + platformFee;
+    const firstPaymentAmount = subtotal + platformFee;
 
     // Locate or dynamically create public user record matching the authenticated session
     let userRecord = await db.query.users.findFirst({
@@ -90,12 +97,17 @@ export async function createBooking(formData: {
       where: eq(tenants.userId, userRecord.id),
     });
 
+    const activePublicKey = tenantPublicKey || tenant?.stellarPublicKey;
+    if (!activePublicKey) {
+      return { success: false, error: 'No guest profile configured. Please set up guest coordinates in the developer portal.' };
+    }
+
     if (!tenant) {
       const [newTenant] = await db
         .insert(tenants)
         .values({
           userId: userRecord.id,
-          stellarPublicKey: tenantPublicKey,
+          stellarPublicKey: activePublicKey,
         })
         .returning();
       tenant = newTenant;
@@ -106,11 +118,11 @@ export async function createBooking(formData: {
         name: `${userRecord.name} Refundable Deposits`,
         type: 'liability',
       });
-    } else if (tenant.stellarPublicKey !== tenantPublicKey) {
+    } else if (tenant.stellarPublicKey !== activePublicKey) {
       // If coordinates updated, keep it in sync
       await db
         .update(tenants)
-        .set({ stellarPublicKey: tenantPublicKey })
+        .set({ stellarPublicKey: activePublicKey })
         .where(eq(tenants.id, tenant.id));
     }
 
@@ -132,7 +144,7 @@ export async function createBooking(formData: {
     // Lease a pool wallet and create the payment intent
     const paymentIntentId = await walletPoolService.leaseWallet(
       reservation.id,
-      totalAmount.toFixed(4)
+      firstPaymentAmount.toFixed(4)
     );
 
     revalidatePath('/admin');
@@ -157,20 +169,16 @@ export async function createBooking(formData: {
 export async function verifyPaymentStatus(paymentIntentId: string): Promise<{
   success: boolean;
   paymentDetected: boolean;
-  status?: string;
+  status: string | null;
   error?: string;
 }> {
   try {
-    // Snapshot status before polling
-    const { paymentIntents } = await import('@/infrastructure/db/schema');
-    const { eq } = await import('drizzle-orm');
-
     const intentBefore = await db.query.paymentIntents.findFirst({
       where: eq(paymentIntents.id, paymentIntentId),
     });
 
     if (!intentBefore) {
-      return { success: false, paymentDetected: false, error: 'Payment intent not found' };
+      return { success: false, paymentDetected: false, status: null, error: 'Payment intent not found' };
     }
 
     if (intentBefore.status === 'paid') {
@@ -194,157 +202,144 @@ export async function verifyPaymentStatus(paymentIntentId: string): Promise<{
       revalidatePath('/admin');
     }
 
-    return { success: true, paymentDetected: detected, status: intentAfter?.status };
+    return { success: true, paymentDetected: detected, status: intentAfter?.status ?? null };
   } catch (error) {
     console.error('Error verifying payment status:', error);
     return {
       success: false,
       paymentDetected: false,
+      status: null,
       error: error instanceof Error ? error.message : 'Ledger scanning failed',
     };
   }
 }
 
+
 // Simulates payment for mock testing in the frontend
-export async function simulatePayment(walletId: string, fromAddress: string, amount: string) {
+export async function simulatePayment(
+  walletId: string,
+  fromAddress: string,
+  amount: string
+): Promise<{ success: boolean; txHash?: string; error?: string }> {
   try {
-    await stellarProvider.simulatePaymentDeposit(walletId, fromAddress, amount);
+    const txHash = await stellarProvider.simulatePaymentDeposit(walletId, fromAddress, amount);
     
-    // Immediately run a poll execution to advance states
-    await paymentPoller.pollPayments();
+    // Do NOT run the poller or refresh/revalidate path automatically to let the user verify manually
     
-    revalidatePath('/admin');
-    return { success: true };
+    return { success: true, txHash };
   } catch (error) {
     return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
   }
 }
 
-// Settlement & checkout process
+// Request checkout & claim deposit (Guest action)
+export async function requestCheckout(reservationId: string): Promise<{ success: boolean; error?: string }> {
+  const result = await requestReservationCheckout(reservationId);
+  return { success: result.success, error: result.error };
+}
+
+// Settlement & checkout process (Host approval or auto-expiration release)
 export async function executeCheckoutSettlement(reservationId: string) {
-  try {
-    const reservation = await db.query.reservations.findFirst({
-      where: eq(reservations.id, reservationId),
-      with: {
-        listing: {
-          with: {
-            owner: true,
-          },
-        },
-        escrows: true,
-      },
-    });
-
-    if (!reservation) throw new Error('Reservation not found');
-    if (reservation.status !== 'escrowed' && reservation.status !== 'active') {
-      throw new Error('Reservation is not in a valid state for checkout');
-    }
-
-    const escrow = reservation.escrows[0];
-    if (!escrow) throw new Error('Security deposit escrow contract not found');
-
-    const ownerPublicKey = reservation.listing.owner.stellarPublicKey;
-    const tenantPublicKey = reservation.tenantId; // Internal ID for ledger path
-
-    // 1. Trigger release on Trustless Work
-    const success = await trustlessProvider.releaseEscrow(escrow.trustlessEscrowId!);
-    if (!success) throw new Error('Failed to release escrow via Trustless Work');
-
-    // 2. Database update
-    await db.transaction(async (tx) => {
-      await tx
-        .update(reservations)
-        .set({ status: 'completed' })
-        .where(eq(reservations.id, reservationId));
-
-      await tx
-        .update(escrows)
-        .set({ status: 'released', updatedAt: new Date() })
-        .where(eq(escrows.id, escrow.id));
-    });
-
-    // 3. Post Double-Entry Ledger: release escrow asset to tenant liability, clear platform owner rent liability
-    await ledgerService.postEntry(
-      `Escrow Release & Booking Completion for Reservation #${reservationId.substring(0, 8)}`,
-      [
-        // Debit owner liability (we clear what we owe the owner, as treasury transfers rent to owner)
-        {
-          accountPath: `liabilities:owners:${reservation.listing.ownerId}`,
-          amount: reservation.subtotalUsdt,
-          direction: 'debit',
-        },
-        // Credit Platform treasury (funds sent to owner)
-        {
-          accountPath: `assets:treasury`,
-          amount: reservation.subtotalUsdt,
-          direction: 'credit',
-        },
-        // Ledger entry to clear the Escrow Asset (cleared back to tenant)
-        {
-          accountPath: `liabilities:tenants:${tenantPublicKey}`,
-          amount: reservation.securityDepositUsdt,
-          direction: 'debit',
-        },
-        {
-          accountPath: `assets:escrow:trustless:${escrow.id}`,
-          amount: reservation.securityDepositUsdt,
-          direction: 'credit',
-        },
-      ],
-      'reservation',
-      reservationId
-    );
-
-    revalidatePath('/admin');
-    revalidatePath(`/reservations/${reservationId}`);
-    return { success: true };
-  } catch (error) {
-    return { success: false, error: error instanceof Error ? error.message : 'Checkout settlement failed' };
-  }
+  const result = await settleReservationCheckout(reservationId);
+  return { success: result.success, error: result.error };
 }
 
 // Action to file a dispute
 export async function fileDispute(reservationId: string, claimedAmount: string, reason: string) {
+  const result = await createReservationDispute(reservationId, claimedAmount, reason);
+  return { success: result.success, error: result.error };
+}
+
+// Submits a transfer either via mock simulation or real on-chain transaction
+// signed on the server side using the guest's secret key from systemConfigs
+export async function executeServerSignedTestnetPayment(paymentIntentId: string): Promise<{ success: boolean; txHash?: string; error?: string }> {
   try {
-    const reservation = await db.query.reservations.findFirst({
-      where: eq(reservations.id, reservationId),
+    const isMock = process.env.STELLAR_MOCK !== 'false';
+
+    const intent = await db.query.paymentIntents.findFirst({
+      where: eq(paymentIntents.id, paymentIntentId),
       with: {
-        escrows: true,
+        reservation: {
+          with: {
+            tenant: true,
+          },
+        },
+        wallet: true,
       },
     });
 
-    if (!reservation) throw new Error('Reservation not found');
-    const escrow = reservation.escrows[0];
-    if (!escrow) throw new Error('No active escrow found');
+    if (!intent) {
+      return { success: false, error: 'Payment intent not found' };
+    }
 
-    const success = await trustlessProvider.disputeEscrow(escrow.trustlessEscrowId!, reason);
-    if (!success) throw new Error('Could not open dispute on Trustless contract');
-
-    // Create dispute in DB
-    await db.transaction(async (tx) => {
-      await tx
-        .update(reservations)
-        .set({ status: 'disputed' })
-        .where(eq(reservations.id, reservationId));
-
-      await tx
-        .update(escrows)
-        .set({ status: 'disputed', updatedAt: new Date() })
-        .where(eq(escrows.id, escrow.id));
-
-      await tx.insert(disputes).values({
-        escrowId: escrow.id,
-        reservationId: reservationId,
-        claimedAmountUsdt: claimedAmount,
-        reason,
-        status: 'active',
-      });
+    const tenantPublicKey = intent.reservation.tenant.stellarPublicKey;
+    
+    // Lookup guest secret key in systemConfigs
+    const secretConfig = await db.query.systemConfigs.findFirst({
+      where: eq(systemConfigs.key, `test_user_secret_${tenantPublicKey}`),
     });
 
-    revalidatePath('/admin');
-    revalidatePath(`/reservations/${reservationId}`);
-    return { success: true };
+    if (isMock) {
+      const result = await simulatePayment(intent.walletId, tenantPublicKey, intent.amountUsdt);
+      if (result.success) {
+        const txHash = result.txHash || 'mock_simulated_tx';
+
+        if (intent.status === 'pending') {
+          await db.transaction(async (tx) => {
+            await tx
+              .update(paymentIntents)
+              .set({ status: 'paid', txHash })
+              .where(eq(paymentIntents.id, intent.id));
+
+            await tx
+              .update(reservations)
+              .set({ status: 'paid' })
+              .where(eq(reservations.id, intent.reservationId));
+
+            await tx
+              .update(wallets)
+              .set({ status: 'settling', lastPolledAt: new Date() })
+              .where(eq(wallets.id, intent.walletId));
+          });
+
+          await ledgerService.postEntry(
+            `Rental Payment Received for Reservation #${intent.reservationId.substring(0, 8)}`,
+            [
+              {
+                accountPath: `assets:wallet_pool:${intent.wallet.publicKey}`,
+                amount: intent.amountUsdt,
+                direction: 'debit',
+              },
+              {
+                accountPath: `liabilities:tenants:${intent.reservation.tenantId}`,
+                amount: intent.amountUsdt,
+                direction: 'credit',
+              },
+            ],
+            'reservation',
+            intent.reservationId
+          );
+
+          await paymentPoller.pollPayments();
+        }
+
+        revalidatePath('/admin');
+        revalidatePath(`/reservations/${intent.reservationId}`);
+        return { success: true, txHash };
+      }
+      return result;
+    }
+
+    // Real Testnet Mode: secret key is mandatory
+    const guestSecretKey = secretConfig?.value;
+    if (!guestSecretKey) {
+      return { success: false, error: `Guest secret key for account ${tenantPublicKey.substring(0, 8)}... not found in database configuration.` };
+    }
+
+    const txHash = await stellarProvider.sendUsdc(guestSecretKey, intent.wallet.publicKey, intent.amountUsdt);
+    return { success: true, txHash };
   } catch (error) {
-    return { success: false, error: error instanceof Error ? error.message : 'Dispute initiation failed' };
+    console.error('Server-signed payment execution failed:', error);
+    return { success: false, error: error instanceof Error ? error.message : 'Payment execution failed' };
   }
 }

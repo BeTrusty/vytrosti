@@ -15,6 +15,7 @@ This document outlines styling, typography, and component guidelines. We priorit
   - `PaymentIntentCard`
   - `WalletStatusChip`
   - `MoneyAmount`
+- For emphasized explanatory surfaces, prefer the shared `precision-callout*` utility classes in `src/app/globals.css` before inventing new one-off gradient cards.
 
 ## Responsive & Accessible Layouts
 - **Mobile First**: All layouts must render perfectly on mobile viewports as well as desktops.

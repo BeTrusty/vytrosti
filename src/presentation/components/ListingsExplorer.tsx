@@ -177,13 +177,13 @@ export function ListingsExplorer({ initialListings }: ListingsExplorerProps) {
                       <div className="flex flex-col text-left">
                         <span className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Per Night</span>
                         <span className="text-base font-extrabold text-[#131b2e]">
-                          {parseFloat(item.pricePerNightUsdt).toFixed(0)} <span className="text-[#064e3b] text-xs font-semibold">USDT</span>
+                          {parseFloat(item.pricePerNightUsdt).toFixed(0)} <span className="text-[#064e3b] text-xs font-semibold">USDC</span>
                         </span>
                       </div>
                       <div className="flex flex-col items-end">
                         <span className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Deposit (Locked)</span>
                         <span className="text-xs font-bold text-slate-600">
-                          {parseFloat(item.securityDepositUsdt).toFixed(0)} USDT
+                          {parseFloat(item.securityDepositUsdt).toFixed(0)} USDC
                         </span>
                       </div>
                     </div>

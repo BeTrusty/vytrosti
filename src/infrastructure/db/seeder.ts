@@ -11,7 +11,8 @@ import {
   escrows, 
   disputes, 
   ledgerEntries, 
-  ledgerLines 
+  ledgerLines,
+  blockchainTransactions
 } from './schema';
 import { encryptSecret } from '../crypto';
 import { stellarProvider } from '../stellar/provider';
@@ -22,6 +23,7 @@ export async function runDatabaseSeeder() {
 
   // Clear existing transactions and bookings first (safe for seed re-runs)
   console.log('Cleaning existing transaction data...');
+  await db.delete(blockchainTransactions);
   await db.delete(disputes);
   await db.delete(ledgerLines);
   await db.delete(ledgerEntries);
@@ -119,8 +121,8 @@ export async function runDatabaseSeeder() {
       ownerId: owner1.id,
       title: 'Uluwatu Sanctuary',
       description: 'A beachfront sanctuary in Bali. Minimalist brutalist villa surrounded by tropical greenery and an infinity pool.',
-      pricePerNightUsdt: '450.0000',
-      securityDepositUsdt: '500.0000',
+      pricePerNightUsdt: '1.0000',
+      securityDepositUsdt: '1.0000',
       images: [
         'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80',
         'https://images.unsplash.com/photo-1513584684374-8bab748fbf90?auto=format&fit=crop&w=800&q=80'
@@ -133,8 +135,8 @@ export async function runDatabaseSeeder() {
       ownerId: owner1.id,
       title: 'Neo-Tokyo Loft',
       description: 'Stunning glass penthouse in Shibuya with floor-to-ceiling windows overlooking the neon Tokyo skyline.',
-      pricePerNightUsdt: '820.0000',
-      securityDepositUsdt: '900.0000',
+      pricePerNightUsdt: '2.0000',
+      securityDepositUsdt: '2.0000',
       images: [
         'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80'
       ],
@@ -146,8 +148,8 @@ export async function runDatabaseSeeder() {
       ownerId: owner2.id,
       title: 'Alpina Peak Cabin',
       description: 'Ultra-modern A-frame cabin in Zermatt. Panoramic mountain views, custom fireplace, and hot tub.',
-      pricePerNightUsdt: '690.0000',
-      securityDepositUsdt: '800.0000',
+      pricePerNightUsdt: '3.0000',
+      securityDepositUsdt: '3.0000',
       images: [
         'https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=800&q=80'
       ],
@@ -159,8 +161,8 @@ export async function runDatabaseSeeder() {
       ownerId: owner2.id,
       title: 'Azure Cliff Estate',
       description: 'Luxurious cliffside villa on the Amalfi Coast. Clean architectural lines, private deck, and emerald sea views.',
-      pricePerNightUsdt: '1200.0000',
-      securityDepositUsdt: '1500.0000',
+      pricePerNightUsdt: '4.0000',
+      securityDepositUsdt: '4.0000',
       images: [
         'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80'
       ],
@@ -172,8 +174,8 @@ export async function runDatabaseSeeder() {
       ownerId: owner1.id,
       title: 'Santorini Sunset Caldera Villa',
       description: 'Exquisite cave villa offering panoramic views of the Aegean Sea, private infinity pool, and white-washed luxury.',
-      pricePerNightUsdt: '950.0000',
-      securityDepositUsdt: '1200.0000',
+      pricePerNightUsdt: '5.0000',
+      securityDepositUsdt: '5.0000',
       images: [
         'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=800&q=80'
       ],
@@ -185,8 +187,8 @@ export async function runDatabaseSeeder() {
       ownerId: owner2.id,
       title: 'Kyoto Bamboo Wood Chalet',
       description: 'Traditional wooden townhouse nestled next to Arashiyama bamboo forest with private onsen and zen gardens.',
-      pricePerNightUsdt: '380.0000',
-      securityDepositUsdt: '400.0000',
+      pricePerNightUsdt: '1.5000',
+      securityDepositUsdt: '1.5000',
       images: [
         'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=800&q=80'
       ],
@@ -198,8 +200,8 @@ export async function runDatabaseSeeder() {
       ownerId: owner1.id,
       title: 'Manhattan Sky Penthouse',
       description: 'Ultra-luxury glass penthouse perched high above Central Park with a private helipad access and wrap-around terrace.',
-      pricePerNightUsdt: '1500.0000',
-      securityDepositUsdt: '2000.0000',
+      pricePerNightUsdt: '6.0000',
+      securityDepositUsdt: '6.0000',
       images: [
         'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80'
       ],
@@ -211,8 +213,8 @@ export async function runDatabaseSeeder() {
       ownerId: owner2.id,
       title: 'Malibu Beachfront Villa',
       description: 'Spectacular mid-century modern beach house directly on Malibu sand with private deck, hot tub, and surf access.',
-      pricePerNightUsdt: '1100.0000',
-      securityDepositUsdt: '1500.0000',
+      pricePerNightUsdt: '7.0000',
+      securityDepositUsdt: '7.0000',
       images: [
         'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&w=800&q=80'
       ],
@@ -224,8 +226,8 @@ export async function runDatabaseSeeder() {
       ownerId: owner1.id,
       title: 'Reykjavik Aurora Glass Cabin',
       description: 'Futuristic A-frame glass cabin designed to watch the Northern Lights directly from your master bed.',
-      pricePerNightUsdt: '550.0000',
-      securityDepositUsdt: '600.0000',
+      pricePerNightUsdt: '2.5000',
+      securityDepositUsdt: '2.5000',
       images: [
         'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=800&q=80'
       ],
@@ -237,8 +239,8 @@ export async function runDatabaseSeeder() {
       ownerId: owner2.id,
       title: 'Tulum Jungle Sanctuary',
       description: 'Eco-chic luxury treehouse offering private cenote pool, open-air master bathroom, and hanging nets.',
-      pricePerNightUsdt: '420.0000',
-      securityDepositUsdt: '500.0000',
+      pricePerNightUsdt: '1.8000',
+      securityDepositUsdt: '1.8000',
       images: [
         'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80'
       ],
@@ -250,8 +252,8 @@ export async function runDatabaseSeeder() {
       ownerId: owner1.id,
       title: 'Copacabana Ocean Loft',
       description: 'Stylish high-ceiling studio loft steps from Copacabana beach, featuring retro Brazilian design and hammocks.',
-      pricePerNightUsdt: '320.0000',
-      securityDepositUsdt: '350.0000',
+      pricePerNightUsdt: '1.2000',
+      securityDepositUsdt: '1.2000',
       images: [
         'https://images.unsplash.com/photo-1502672023488-70e25813eb80?auto=format&fit=crop&w=800&q=80'
       ],
@@ -263,8 +265,8 @@ export async function runDatabaseSeeder() {
       ownerId: owner2.id,
       title: 'Reykjavik Volcanic Estate',
       description: 'Architectural volcanic stone estate surrounded by active steam vents and lava fields, with heated geothermal pool.',
-      pricePerNightUsdt: '1250.0000',
-      securityDepositUsdt: '1500.0000',
+      pricePerNightUsdt: '8.0000',
+      securityDepositUsdt: '8.0000',
       images: [
         'https://images.unsplash.com/photo-1512915922686-57c11dde9b6b?auto=format&fit=crop&w=800&q=80'
       ],
@@ -276,8 +278,8 @@ export async function runDatabaseSeeder() {
       ownerId: owner1.id,
       title: 'Chamonix Alpine Chalet',
       description: 'Cozy timber chalet under Mont Blanc with sauna, outdoor hot tub, and direct ski-in/ski-out slope access.',
-      pricePerNightUsdt: '720.0000',
-      securityDepositUsdt: '800.0000',
+      pricePerNightUsdt: '3.5000',
+      securityDepositUsdt: '3.5000',
       images: [
         'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&w=800&q=80'
       ],
@@ -289,8 +291,8 @@ export async function runDatabaseSeeder() {
       ownerId: owner2.id,
       title: 'Phuket Beach Hideaway',
       description: 'Cliffside private pool villa overlooking the Andaman Sea, featuring a dedicated butler and private beach access.',
-      pricePerNightUsdt: '880.0000',
-      securityDepositUsdt: '1000.0000',
+      pricePerNightUsdt: '4.5000',
+      securityDepositUsdt: '4.5000',
       images: [
         'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80'
       ],
@@ -302,8 +304,8 @@ export async function runDatabaseSeeder() {
       ownerId: owner1.id,
       title: 'Sydney Harbour Penthouse',
       description: 'Sprawling luxury penthouse with uninterrupted panoramic views of the Opera House and Harbour Bridge.',
-      pricePerNightUsdt: '1400.0000',
-      securityDepositUsdt: '1800.0000',
+      pricePerNightUsdt: '9.0000',
+      securityDepositUsdt: '9.0000',
       images: [
         'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'
       ],
@@ -315,8 +317,8 @@ export async function runDatabaseSeeder() {
       ownerId: owner2.id,
       title: 'Aspen Wood Cabin',
       description: 'Charming luxury log cabin with a stone fireplace, billiards room, and outdoor heated jacuzzi.',
-      pricePerNightUsdt: '610.0000',
-      securityDepositUsdt: '700.0000',
+      pricePerNightUsdt: '3.2000',
+      securityDepositUsdt: '3.2000',
       images: [
         'https://images.unsplash.com/photo-1542718610-a1d656d1884c?auto=format&fit=crop&w=800&q=80'
       ],
@@ -328,8 +330,8 @@ export async function runDatabaseSeeder() {
       ownerId: owner1.id,
       title: 'Cape Town Cliff Villa',
       description: 'Stunning minimalist villa built directly into the cliffs of Clifton Beach, with heated pool and ocean sunsets.',
-      pricePerNightUsdt: '980.0000',
-      securityDepositUsdt: '1200.0000',
+      pricePerNightUsdt: '5.5000',
+      securityDepositUsdt: '5.5000',
       images: [
         'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80'
       ],
@@ -341,8 +343,8 @@ export async function runDatabaseSeeder() {
       ownerId: owner2.id,
       title: 'Barcelona Gothic Loft',
       description: 'High-ceiling loft with exposed historic brickwork, steel accents, and a private courtyard pool in the Gothic Quarter.',
-      pricePerNightUsdt: '410.0000',
-      securityDepositUsdt: '450.0000',
+      pricePerNightUsdt: '2.2000',
+      securityDepositUsdt: '2.2000',
       images: [
         'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80'
       ],
@@ -354,8 +356,8 @@ export async function runDatabaseSeeder() {
       ownerId: owner1.id,
       title: 'Dubailand Desert Villa',
       description: 'Ultra-luxury oasis in the Dubai desert featuring sand-dune views, infinity pool, and private falconry displays.',
-      pricePerNightUsdt: '1600.0000',
-      securityDepositUsdt: '2000.0000',
+      pricePerNightUsdt: '10.0000',
+      securityDepositUsdt: '10.0000',
       images: [
         'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80'
       ],
@@ -367,8 +369,8 @@ export async function runDatabaseSeeder() {
       ownerId: owner2.id,
       title: 'Vancouver Forest Cabin',
       description: 'Rustic-chic cabin in the deep woods of British Columbia, with a cedar hot tub and wooden deck over a flowing stream.',
-      pricePerNightUsdt: '340.0000',
-      securityDepositUsdt: '400.0000',
+      pricePerNightUsdt: '1.6000',
+      securityDepositUsdt: '1.6000',
       images: [
         'https://images.unsplash.com/photo-1449034446853-66c86144b0ad?auto=format&fit=crop&w=800&q=80'
       ],
@@ -435,7 +437,7 @@ export async function runDatabaseSeeder() {
 
   // 6. Create Booking 1 (Pending Payment state)
   console.log('Seeding booking 1 (pending payment)...');
-  // 4 nights at Uluwatu Sanctuary = 450 * 4 = 1800 rent + 90 fee + 500 deposit = 2390 total
+  // 4 nights at Uluwatu Sanctuary = 1 * 4 = 4 rent + 0.20 fee + 1 deposit = 5.20 total
   const checkIn1 = new Date();
   checkIn1.setDate(checkIn1.getDate() + 5);
   const checkOut1 = new Date();
@@ -446,9 +448,9 @@ export async function runDatabaseSeeder() {
     tenantId: tenant1.id,
     checkIn: checkIn1,
     checkOut: checkOut1,
-    subtotalUsdt: '1800.0000',
-    securityDepositUsdt: '500.0000',
-    platformFeeUsdt: '90.0000',
+    subtotalUsdt: '4.0000',
+    securityDepositUsdt: '1.0000',
+    platformFeeUsdt: '0.2000',
     status: 'pending_payment',
   }).returning();
 
@@ -458,14 +460,14 @@ export async function runDatabaseSeeder() {
   await db.insert(paymentIntents).values({
     reservationId: res1.id,
     walletId: poolWallets[0].id,
-    amountUsdt: '2390.0000',
+    amountUsdt: '5.2000',
     status: 'pending',
     expiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours expiry
   });
 
   // 7. Create Booking 2 (Escrowed / Deposit Secured state)
   console.log('Seeding booking 2 (escrowed / deposit secured)...');
-  // 5 nights at Tokyo Loft = 820 * 5 = 4100 rent + 205 fee + 900 deposit = 5205 total
+  // 5 nights at Tokyo Loft = 2 * 5 = 10 rent + 0.5 fee + 2 deposit = 12.5 total
   const checkIn2 = new Date();
   checkIn2.setDate(checkIn2.getDate() + 15);
   const checkOut2 = new Date();
@@ -476,9 +478,9 @@ export async function runDatabaseSeeder() {
     tenantId: tenant1.id,
     checkIn: checkIn2,
     checkOut: checkOut2,
-    subtotalUsdt: '4100.0000',
-    securityDepositUsdt: '900.0000',
-    platformFeeUsdt: '205.0000',
+    subtotalUsdt: '10.0000',
+    securityDepositUsdt: '2.0000',
+    platformFeeUsdt: '0.5000',
     status: 'escrowed',
   }).returning();
 
@@ -487,7 +489,7 @@ export async function runDatabaseSeeder() {
   await db.insert(paymentIntents).values({
     reservationId: res2.id,
     walletId: poolWallets[1].id,
-    amountUsdt: '5205.0000',
+    amountUsdt: '12.5000',
     status: 'paid',
     expiresAt: new Date(Date.now() - 1 * 60 * 60 * 1000), // expired/used
     txHash: '0x2222222222222222222222222222222222222222222222222222222222222222',
@@ -496,7 +498,7 @@ export async function runDatabaseSeeder() {
   const [escrow2] = await db.insert(escrows).values({
     reservationId: res2.id,
     contractAddress: 'GCSMARTECSROWCONTRACT222222222222222222222222222',
-    amountUsdt: '900.0000',
+    amountUsdt: '2.0000',
     status: 'funded',
     trustlessEscrowId: 'tw_escrow_8821092',
   }).returning();
@@ -515,10 +517,10 @@ export async function runDatabaseSeeder() {
     'reservation',
     res2.id,
     [
-      { accountPath: `assets:wallet_pool:${poolWallets[1].publicKey}`, amount: '5205.0000', direction: 'debit' },
-      { accountPath: `liabilities:tenants:${tenant1.id}`, amount: '900.0000', direction: 'credit' },
-      { accountPath: `liabilities:owners:${owner1.id}`, amount: '4100.0000', direction: 'credit' },
-      { accountPath: `revenue:fees`, amount: '205.0000', direction: 'credit' },
+      { accountPath: `assets:wallet_pool:${poolWallets[1].publicKey}`, amount: '12.5000', direction: 'debit' },
+      { accountPath: `liabilities:tenants:${tenant1.id}`, amount: '2.0000', direction: 'credit' },
+      { accountPath: `liabilities:owners:${owner1.id}`, amount: '10.0000', direction: 'credit' },
+      { accountPath: `revenue:fees`, amount: '0.5000', direction: 'credit' },
     ]
   );
   // B. Security Deposit Locked in smart escrow contract
@@ -527,8 +529,8 @@ export async function runDatabaseSeeder() {
     'reservation',
     res2.id,
     [
-      { accountPath: `assets:escrow:trustless:${escrow2.id}`, amount: '900.0000', direction: 'debit' },
-      { accountPath: `assets:wallet_pool:${poolWallets[1].publicKey}`, amount: '900.0000', direction: 'credit' },
+      { accountPath: `assets:escrow:trustless:${escrow2.id}`, amount: '2.0000', direction: 'debit' },
+      { accountPath: `assets:wallet_pool:${poolWallets[1].publicKey}`, amount: '2.0000', direction: 'credit' },
     ]
   );
   // C. Sweeping rent and fee to platform treasury
@@ -537,15 +539,15 @@ export async function runDatabaseSeeder() {
     'reservation',
     res2.id,
     [
-      { accountPath: `assets:treasury`, amount: '4305.0000', direction: 'debit' },
-      { accountPath: `assets:wallet_pool:${poolWallets[1].publicKey}`, amount: '4305.0000', direction: 'credit' },
+      { accountPath: `assets:treasury`, amount: '10.5000', direction: 'debit' },
+      { accountPath: `assets:wallet_pool:${poolWallets[1].publicKey}`, amount: '10.5000', direction: 'credit' },
     ]
   );
 
 
   // 8. Create Booking 3 (Completed checkout state)
   console.log('Seeding booking 3 (completed checkout)...');
-  // 5 nights at Alpina Cabin = 690 * 5 = 3450 rent + 172.50 fee + 800 deposit = 4422.50 total
+  // 5 nights at Alpina Cabin = 3 * 5 = 15 rent + 0.75 fee + 3 deposit = 18.75 total
   const checkIn3 = new Date();
   checkIn3.setDate(checkIn3.getDate() - 10);
   const checkOut3 = new Date();
@@ -556,9 +558,9 @@ export async function runDatabaseSeeder() {
     tenantId: tenant2.id,
     checkIn: checkIn3,
     checkOut: checkOut3,
-    subtotalUsdt: '3450.0000',
-    securityDepositUsdt: '800.0000',
-    platformFeeUsdt: '172.5000',
+    subtotalUsdt: '15.0000',
+    securityDepositUsdt: '3.0000',
+    platformFeeUsdt: '0.7500',
     status: 'completed',
   }).returning();
 
@@ -567,7 +569,7 @@ export async function runDatabaseSeeder() {
   await db.insert(paymentIntents).values({
     reservationId: res3.id,
     walletId: poolWallets[2].id,
-    amountUsdt: '4422.5000',
+    amountUsdt: '18.7500',
     status: 'paid',
     expiresAt: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000),
     txHash: '0x3333333333333333333333333333333333333333333333333333333333333333',
@@ -576,7 +578,7 @@ export async function runDatabaseSeeder() {
   const [escrow3] = await db.insert(escrows).values({
     reservationId: res3.id,
     contractAddress: 'GCSMARTECSROWCONTRACT333333333333333333333333333',
-    amountUsdt: '800.0000',
+    amountUsdt: '3.0000',
     status: 'released',
     trustlessEscrowId: 'tw_escrow_5510293',
   }).returning();
@@ -595,10 +597,10 @@ export async function runDatabaseSeeder() {
     'reservation',
     res3.id,
     [
-      { accountPath: `assets:wallet_pool:${poolWallets[2].publicKey}`, amount: '4422.5000', direction: 'debit' },
-      { accountPath: `liabilities:tenants:${tenant2.id}`, amount: '800.0000', direction: 'credit' },
-      { accountPath: `liabilities:owners:${owner2.id}`, amount: '3450.0000', direction: 'credit' },
-      { accountPath: `revenue:fees`, amount: '172.5000', direction: 'credit' },
+      { accountPath: `assets:wallet_pool:${poolWallets[2].publicKey}`, amount: '18.7500', direction: 'debit' },
+      { accountPath: `liabilities:tenants:${tenant2.id}`, amount: '3.0000', direction: 'credit' },
+      { accountPath: `liabilities:owners:${owner2.id}`, amount: '15.0000', direction: 'credit' },
+      { accountPath: `revenue:fees`, amount: '0.7500', direction: 'credit' },
     ]
   );
   // B. Security Deposit Locked in smart escrow contract
@@ -607,8 +609,8 @@ export async function runDatabaseSeeder() {
     'reservation',
     res3.id,
     [
-      { accountPath: `assets:escrow:trustless:${escrow3.id}`, amount: '800.0000', direction: 'debit' },
-      { accountPath: `assets:wallet_pool:${poolWallets[2].publicKey}`, amount: '800.0000', direction: 'credit' },
+      { accountPath: `assets:escrow:trustless:${escrow3.id}`, amount: '3.0000', direction: 'debit' },
+      { accountPath: `assets:wallet_pool:${poolWallets[2].publicKey}`, amount: '3.0000', direction: 'credit' },
     ]
   );
   // C. Sweeping rent and fee to platform treasury
@@ -617,8 +619,8 @@ export async function runDatabaseSeeder() {
     'reservation',
     res3.id,
     [
-      { accountPath: `assets:treasury`, amount: '3622.5000', direction: 'debit' },
-      { accountPath: `assets:wallet_pool:${poolWallets[2].publicKey}`, amount: '3622.5000', direction: 'credit' },
+      { accountPath: `assets:treasury`, amount: '15.7500', direction: 'debit' },
+      { accountPath: `assets:wallet_pool:${poolWallets[2].publicKey}`, amount: '15.7500', direction: 'credit' },
     ]
   );
   // D. Checkout Payout to Owner (Owner rent portion paid out of treasury)
@@ -627,8 +629,8 @@ export async function runDatabaseSeeder() {
     'reservation',
     res3.id,
     [
-      { accountPath: `liabilities:owners:${owner2.id}`, amount: '3450.0000', direction: 'debit' },
-      { accountPath: `assets:treasury`, amount: '3450.0000', direction: 'credit' },
+      { accountPath: `liabilities:owners:${owner2.id}`, amount: '15.0000', direction: 'debit' },
+      { accountPath: `assets:treasury`, amount: '15.0000', direction: 'credit' },
     ]
   );
   // E. Checkout Refund to Tenant (Tenant deposit released from Smart Escrow contract)
@@ -637,15 +639,15 @@ export async function runDatabaseSeeder() {
     'reservation',
     res3.id,
     [
-      { accountPath: `liabilities:tenants:${tenant2.id}`, amount: '800.0000', direction: 'debit' },
-      { accountPath: `assets:escrow:trustless:${escrow3.id}`, amount: '800.0000', direction: 'credit' },
+      { accountPath: `liabilities:tenants:${tenant2.id}`, amount: '3.0000', direction: 'debit' },
+      { accountPath: `assets:escrow:trustless:${escrow3.id}`, amount: '3.0000', direction: 'credit' },
     ]
   );
 
 
   // 9. Create Booking 4 (Disputed state)
   console.log('Seeding booking 4 (disputed)...');
-  // 5 nights at Azure Cliff = 1200 * 5 = 6000 rent + 300 fee + 1500 deposit = 7800 total
+  // 5 nights at Azure Cliff = 4 * 5 = 20 rent + 1 fee + 4 deposit = 25 total
   const checkIn4 = new Date();
   checkIn4.setDate(checkIn4.getDate() - 15);
   const checkOut4 = new Date();
@@ -656,9 +658,9 @@ export async function runDatabaseSeeder() {
     tenantId: tenant1.id,
     checkIn: checkIn4,
     checkOut: checkOut4,
-    subtotalUsdt: '6000.0000',
-    securityDepositUsdt: '1500.0000',
-    platformFeeUsdt: '300.0000',
+    subtotalUsdt: '20.0000',
+    securityDepositUsdt: '4.0000',
+    platformFeeUsdt: '1.0000',
     status: 'disputed',
   }).returning();
 
@@ -667,7 +669,7 @@ export async function runDatabaseSeeder() {
   await db.insert(paymentIntents).values({
     reservationId: res4.id,
     walletId: poolWallets[3].id,
-    amountUsdt: '7800.0000',
+    amountUsdt: '25.0000',
     status: 'paid',
     expiresAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
     txHash: '0x4444444444444444444444444444444444444444444444444444444444444444',
@@ -676,7 +678,7 @@ export async function runDatabaseSeeder() {
   const [escrow4] = await db.insert(escrows).values({
     reservationId: res4.id,
     contractAddress: 'GCSMARTECSROWCONTRACT444444444444444444444444444',
-    amountUsdt: '1500.0000',
+    amountUsdt: '4.0000',
     status: 'disputed',
     trustlessEscrowId: 'tw_escrow_3309120',
   }).returning();
@@ -692,7 +694,7 @@ export async function runDatabaseSeeder() {
   await db.insert(disputes).values({
     escrowId: escrow4.id,
     reservationId: res4.id,
-    claimedAmountUsdt: '1500.0000',
+    claimedAmountUsdt: '4.0000',
     reason: 'Host claims guest damaged the custom outdoor dining table and broke glass panels.',
     status: 'active',
   });
@@ -704,10 +706,10 @@ export async function runDatabaseSeeder() {
     'reservation',
     res4.id,
     [
-      { accountPath: `assets:wallet_pool:${poolWallets[3].publicKey}`, amount: '7800.0000', direction: 'debit' },
-      { accountPath: `liabilities:tenants:${tenant1.id}`, amount: '1500.0000', direction: 'credit' },
-      { accountPath: `liabilities:owners:${owner2.id}`, amount: '6000.0000', direction: 'credit' },
-      { accountPath: `revenue:fees`, amount: '300.0000', direction: 'credit' },
+      { accountPath: `assets:wallet_pool:${poolWallets[3].publicKey}`, amount: '25.0000', direction: 'debit' },
+      { accountPath: `liabilities:tenants:${tenant1.id}`, amount: '4.0000', direction: 'credit' },
+      { accountPath: `liabilities:owners:${owner2.id}`, amount: '20.0000', direction: 'credit' },
+      { accountPath: `revenue:fees`, amount: '1.0000', direction: 'credit' },
     ]
   );
   // B. Security Deposit Locked in smart escrow contract
@@ -716,8 +718,8 @@ export async function runDatabaseSeeder() {
     'reservation',
     res4.id,
     [
-      { accountPath: `assets:escrow:trustless:${escrow4.id}`, amount: '1500.0000', direction: 'debit' },
-      { accountPath: `assets:wallet_pool:${poolWallets[3].publicKey}`, amount: '1500.0000', direction: 'credit' },
+      { accountPath: `assets:escrow:trustless:${escrow4.id}`, amount: '4.0000', direction: 'debit' },
+      { accountPath: `assets:wallet_pool:${poolWallets[3].publicKey}`, amount: '4.0000', direction: 'credit' },
     ]
   );
   // C. Sweeping rent and fee to platform treasury
@@ -726,8 +728,8 @@ export async function runDatabaseSeeder() {
     'reservation',
     res4.id,
     [
-      { accountPath: `assets:treasury`, amount: '6300.0000', direction: 'debit' },
-      { accountPath: `assets:wallet_pool:${poolWallets[3].publicKey}`, amount: '6300.0000', direction: 'credit' },
+      { accountPath: `assets:treasury`, amount: '21.0000', direction: 'debit' },
+      { accountPath: `assets:wallet_pool:${poolWallets[3].publicKey}`, amount: '21.0000', direction: 'credit' },
     ]
   );
   // D. checkout rent payout to host
@@ -736,8 +738,8 @@ export async function runDatabaseSeeder() {
     'reservation',
     res4.id,
     [
-      { accountPath: `liabilities:owners:${owner2.id}`, amount: '6000.0000', direction: 'debit' },
-      { accountPath: `assets:treasury`, amount: '6000.0000', direction: 'credit' },
+      { accountPath: `liabilities:owners:${owner2.id}`, amount: '20.0000', direction: 'debit' },
+      { accountPath: `assets:treasury`, amount: '20.0000', direction: 'credit' },
     ]
   );
 

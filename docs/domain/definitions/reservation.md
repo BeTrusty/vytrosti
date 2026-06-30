@@ -20,18 +20,20 @@ stateDiagram-v2
   [*] --> pending_payment
   pending_payment --> paid : Stellar payment detected
   pending_payment --> cancelled : Timeout/Tenant cancels
-  paid --> escrowed : Trustless Work Escrow funded
+  paid --> escrowed : Trustless Work deposit funded
   escrowed --> active : Check-in date reached
-  active --> completed : Check-out date reached (no dispute)
-  active --> disputed : Tenant/Owner opens dispute
+  active --> checking_out : Tenant checks out & claims refund
+  checking_out --> completed : Host accepts / window expires
+  checking_out --> disputed : Host opens dispute in review window
   disputed --> completed : Dispute resolved
   escrowed --> cancelled : Owner cancels before check-in (Refunds trigger)
 ```
 
-- **pending_payment**: Reservation created, awaiting Stellar transfer.
-- **paid**: Rent & deposit received on the pool wallet.
-- **escrowed**: Rent held in settlement and deposit locked in Trustless Work Escrow.
+- **pending_payment**: Reservation created, awaiting the first Stellar transfer.
+- **paid**: Rent plus platform fee were confirmed and swept. The security deposit still needs its Trustless Work funding step.
+- **escrowed**: The security deposit is locked in Trustless Work and the stay is fully protected.
 - **active**: The guest has checked in.
-- **completed**: Checkout completed, funds released to owner, deposit returned to tenant.
+- **checking_out**: The guest has checked out and claimed the deposit refund. Starts the configurable review window (default 72h).
+- **completed**: Checkout settled, funds released to owner, deposit returned to tenant.
 - **cancelled**: Reservation aborted, funds returned to respective parties.
-- **disputed**: Collateral locked due to damage claims or complaints.
+- **disputed**: Collateral locked due to damage claims or complaints filed by the Host within the review window.

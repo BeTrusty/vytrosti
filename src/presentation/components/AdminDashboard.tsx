@@ -340,7 +340,7 @@ export function AdminDashboard({ initialData }: AdminDashboardProps) {
                         <Table.ScrollContainer>
                           <Table.Content aria-label="System Users List">
                             <Table.Header>
-                              <Table.Column>USER NAME</Table.Column>
+                              <Table.Column isRowHeader>USER NAME</Table.Column>
                               <Table.Column>EMAIL</Table.Column>
                               <Table.Column>ACTIVE ROLES</Table.Column>
                               <Table.Column>CREATED AT</Table.Column>
@@ -393,7 +393,7 @@ export function AdminDashboard({ initialData }: AdminDashboardProps) {
                         <Table.ScrollContainer>
                           <Table.Content aria-label="Hosts List">
                             <Table.Header>
-                              <Table.Column>HOST NAME</Table.Column>
+                              <Table.Column isRowHeader>HOST NAME</Table.Column>
                               <Table.Column>ACCOUNT COORDINATES</Table.Column>
                               <Table.Column>LISTINGS</Table.Column>
                               <Table.Column>BOOKINGS RECEIVED</Table.Column>
@@ -440,7 +440,7 @@ export function AdminDashboard({ initialData }: AdminDashboardProps) {
                         <Table.ScrollContainer>
                           <Table.Content aria-label="Guests List">
                             <Table.Header>
-                              <Table.Column>GUEST NAME</Table.Column>
+                              <Table.Column isRowHeader>GUEST NAME</Table.Column>
                               <Table.Column>ACCOUNT COORDINATES</Table.Column>
                               <Table.Column>RESERVATIONS MADE</Table.Column>
                             </Table.Header>
@@ -556,7 +556,7 @@ export function AdminDashboard({ initialData }: AdminDashboardProps) {
                 <Card className="ambient-lift border border-[#eaedff] p-6 rounded-2xl bg-white">
                   <div className="flex flex-col gap-2 text-left">
                     <span className="text-slate-400 font-semibold text-[10px] uppercase tracking-widest">Total Stays Volume</span>
-                    <h3 className="text-3xl font-extrabold text-[#131b2e]">{totalVolume.toFixed(2)} USDT</h3>
+                    <h3 className="text-3xl font-extrabold text-[#131b2e]">{totalVolume.toFixed(2)} USDC</h3>
                     <p className="text-slate-400 text-xs mt-2">Sum of rent payments of all active or completed bookings.</p>
                   </div>
                 </Card>
@@ -616,7 +616,7 @@ export function AdminDashboard({ initialData }: AdminDashboardProps) {
                   <Table.ScrollContainer>
                     <Table.Content aria-label="Properties List">
                       <Table.Header>
-                        <Table.Column>PROPERTY TITLE</Table.Column>
+                        <Table.Column isRowHeader>PROPERTY TITLE</Table.Column>
                         <Table.Column>CITY</Table.Column>
                         <Table.Column>COUNTRY</Table.Column>
                         <Table.Column>PRICE PER NIGHT</Table.Column>
@@ -628,8 +628,8 @@ export function AdminDashboard({ initialData }: AdminDashboardProps) {
                             <Table.Cell className="font-bold text-slate-800">{listing.title}</Table.Cell>
                             <Table.Cell className="text-slate-600 text-xs">{listing.city}</Table.Cell>
                             <Table.Cell className="text-slate-600 text-xs">{listing.country}</Table.Cell>
-                            <Table.Cell className="font-semibold text-slate-800">{parseFloat(listing.pricePerNightUsdt).toFixed(2)} USDT</Table.Cell>
-                            <Table.Cell className="text-slate-500 font-mono text-xs">{parseFloat(listing.securityDepositUsdt).toFixed(2)} USDT</Table.Cell>
+                            <Table.Cell className="font-semibold text-slate-800">{parseFloat(listing.pricePerNightUsdt).toFixed(2)} USDC</Table.Cell>
+                            <Table.Cell className="text-slate-500 font-mono text-xs">{parseFloat(listing.securityDepositUsdt).toFixed(2)} USDC</Table.Cell>
                           </Table.Row>
                         ))}
                       </Table.Body>
@@ -651,7 +651,7 @@ export function AdminDashboard({ initialData }: AdminDashboardProps) {
                   <Table.ScrollContainer>
                     <Table.Content aria-label="Reservations List">
                       <Table.Header>
-                        <Table.Column>ID</Table.Column>
+                        <Table.Column isRowHeader>ID</Table.Column>
                         <Table.Column>PROPERTY</Table.Column>
                         <Table.Column>STAY DATES</Table.Column>
                         <Table.Column>RENT DUE</Table.Column>
@@ -667,8 +667,8 @@ export function AdminDashboard({ initialData }: AdminDashboardProps) {
                             <Table.Cell className="text-xs text-slate-500">
                               {new Date(res.checkIn).toLocaleDateString()} - {new Date(res.checkOut).toLocaleDateString()}
                             </Table.Cell>
-                            <Table.Cell className="font-bold text-slate-800">{parseFloat(res.subtotalUsdt).toFixed(2)} USDT</Table.Cell>
-                            <Table.Cell className="text-xs text-slate-600 font-mono">{parseFloat(res.securityDepositUsdt).toFixed(2)} USDT</Table.Cell>
+                            <Table.Cell className="font-bold text-slate-800">{parseFloat(res.subtotalUsdt).toFixed(2)} USDC</Table.Cell>
+                            <Table.Cell className="text-xs text-slate-600 font-mono">{parseFloat(res.securityDepositUsdt).toFixed(2)} USDC</Table.Cell>
                             <Table.Cell>
                               <Chip 
                                 size="sm" 
@@ -708,7 +708,7 @@ export function AdminDashboard({ initialData }: AdminDashboardProps) {
                   <Table.ScrollContainer>
                     <Table.Content aria-label="Account Pool Status">
                       <Table.Header>
-                        <Table.Column>ACCOUNT COORDINATES</Table.Column>
+                        <Table.Column isRowHeader>ACCOUNT COORDINATES</Table.Column>
                         <Table.Column>ACCOUNT STATUS</Table.Column>
                         <Table.Column>LAST SCANNED AT</Table.Column>
                         <Table.Column>HORIZON LEDGER CURSOR</Table.Column>
@@ -756,7 +756,7 @@ export function AdminDashboard({ initialData }: AdminDashboardProps) {
                         <Table.ScrollContainer>
                           <Table.Content aria-label="Ledger Account Balances">
                             <Table.Header>
-                              <Table.Column>ACCOUNT PATH</Table.Column>
+                              <Table.Column isRowHeader>ACCOUNT PATH</Table.Column>
                               <Table.Column className="text-right">BALANCE</Table.Column>
                             </Table.Header>
                             <Table.Body>
@@ -766,7 +766,7 @@ export function AdminDashboard({ initialData }: AdminDashboardProps) {
                                     {acc.accountPath}
                                   </Table.Cell>
                                   <Table.Cell className="font-mono text-xs text-right font-bold text-slate-800">
-                                    {parseFloat(acc.balance).toFixed(2)} USDT
+                                    {parseFloat(acc.balance).toFixed(2)} USDC
                                   </Table.Cell>
                                 </Table.Row>
                               ))}
@@ -832,7 +832,7 @@ export function AdminDashboard({ initialData }: AdminDashboardProps) {
                     <h4 className="font-bold text-[#131b2e]">Arbitrate Dispute</h4>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="flex flex-col gap-1">
-                        <label className="text-xs font-semibold text-slate-700">Refund to Tenant (USDT)</label>
+                        <label className="text-xs font-semibold text-slate-700">Refund to Tenant (USDC)</label>
                         <Input
                           type="number"
                           value={tenantShare}
@@ -842,7 +842,7 @@ export function AdminDashboard({ initialData }: AdminDashboardProps) {
                         />
                       </div>
                       <div className="flex flex-col gap-1">
-                        <label className="text-xs font-semibold text-slate-700">Award to Host (USDT)</label>
+                        <label className="text-xs font-semibold text-slate-700">Award to Host (USDC)</label>
                         <Input
                           type="number"
                           value={ownerShare}
@@ -862,7 +862,7 @@ export function AdminDashboard({ initialData }: AdminDashboardProps) {
                     <Table.ScrollContainer>
                       <Table.Content aria-label="Disputes arbitration table">
                         <Table.Header>
-                          <Table.Column>RESERVATION ID</Table.Column>
+                          <Table.Column isRowHeader>RESERVATION ID</Table.Column>
                           <Table.Column>CLAIM AMOUNT</Table.Column>
                           <Table.Column>CLAIM REASON</Table.Column>
                           <Table.Column>CLAIM STATUS</Table.Column>
@@ -873,7 +873,7 @@ export function AdminDashboard({ initialData }: AdminDashboardProps) {
                           {initialData.disputes.map((dispute) => (
                             <Table.Row key={dispute.id}>
                               <Table.Cell className="font-semibold text-[#003527]">#{dispute.reservationId.substring(0, 8)}</Table.Cell>
-                              <Table.Cell className="font-bold text-slate-800">{parseFloat(dispute.claimedAmountUsdt).toFixed(2)} USDT</Table.Cell>
+                              <Table.Cell className="font-bold text-slate-800">{parseFloat(dispute.claimedAmountUsdt).toFixed(2)} USDC</Table.Cell>
                               <Table.Cell className="text-xs text-slate-600 max-w-[200px] truncate">{dispute.reason}</Table.Cell>
                               <Table.Cell>
                                 <Chip size="sm" color={dispute.status === 'active' ? 'danger' : 'success'} variant="soft" className="font-semibold">
@@ -927,16 +927,16 @@ export function AdminDashboard({ initialData }: AdminDashboardProps) {
                       <span className="text-slate-800 font-mono text-xs mt-1">https://horizon-testnet.stellar.org</span>
                     </div>
                     <div className="flex flex-col border-b border-[#eaedff] pb-3">
-                      <span className="text-slate-400 font-semibold text-xs">USDT Asset Coordinates</span>
-                      <span className="text-slate-800 font-mono text-[10px] break-all mt-1">USDT (GCQTG2372RLF74OWMEV4SIOTWIEZCA4DZ32C37R7635M262NZKU67252)</span>
+                      <span className="text-slate-400 font-semibold text-xs">USDC Asset Coordinates</span>
+                      <span className="text-slate-800 font-mono text-[10px] break-all mt-1">USDC (configured via STELLAR_USDC_ASSET_ISSUER)</span>
                     </div>
                     <div className="flex flex-col border-b border-[#eaedff] pb-3">
                       <span className="text-slate-400 font-semibold text-xs">Trustless Work API Target</span>
-                      <span className="text-slate-800 font-mono text-xs mt-1">https://api.trustless.work</span>
+                      <span className="text-slate-800 font-mono text-xs mt-1">Configured via TRUSTLESS_API_URL</span>
                     </div>
                     <div className="flex flex-col border-b border-[#eaedff] pb-3">
                       <span className="text-slate-400 font-semibold text-xs">Platform Treasury Account Coordinates</span>
-                      <span className="text-slate-800 font-mono text-xs mt-1">GCQTG2372RLF74OWMEV4SIOTWIEZCA4DZ32C37R7635M262NZKU67252</span>
+                      <span className="text-slate-800 font-mono text-xs mt-1">Configured via STELLAR_TREASURY_PUBLIC_KEY</span>
                     </div>
                     <div className="flex flex-col border-b border-[#eaedff] pb-3">
                       <span className="text-slate-400 font-semibold text-xs">Account Secret Encryption Key (AES-256)</span>
@@ -958,6 +958,13 @@ export function AdminDashboard({ initialData }: AdminDashboardProps) {
                     >
                       Reset & Re-Seed Database
                     </Button>
+                    <Link href="/testnet">
+                      <Button
+                        className="bg-slate-50 text-[#003527] border border-[#eaedff] hover:bg-slate-100 rounded-xl text-xs font-bold"
+                      >
+                        Stellar Testnet Setup
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </Card>

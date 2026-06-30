@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import NextLink from 'next/link';
 import { Button } from '@heroui/react';
 import { usePathname, useRouter } from 'next/navigation';
@@ -12,7 +13,7 @@ export function Navigation() {
   const router = useRouter();
   const session = authClient.useSession();
   
-  const isAdminPath = pathname.startsWith('/admin');
+  const isAdminPath = pathname.startsWith('/admin') || pathname === '/testnet';
   const isAuthenticated = !!session.data;
   const user = session.data?.user;
   const isAdminUser = user?.role === 'admin';
@@ -33,8 +34,20 @@ export function Navigation() {
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Brand */}
         <div className="flex items-center">
-          <NextLink href="/" className="font-bold text-xl text-[#003527] tracking-wider flex items-center gap-2">
-            <span className="text-2xl">🌱</span> vytrosti
+          <NextLink href="/" className="flex items-center gap-3" aria-label="BeTrustless home">
+            <span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-md bg-black ring-1 ring-black/5">
+              <Image
+                src="/brand/vytrosti-mark.png"
+                alt="BeTrustless logo"
+                width={414}
+                height={363}
+                className="h-8 w-8 object-contain"
+                priority
+              />
+            </span>
+            <span className="font-bold text-xl tracking-[0.12em] text-[#003527]">
+              BeTrustless
+            </span>
           </NextLink>
         </div>
 
@@ -42,7 +55,7 @@ export function Navigation() {
         <div className="hidden sm:flex items-center gap-6">
           <NextLink 
             href="/" 
-            className={`flex items-center gap-1.5 text-sm ${!isAdminPath ? 'text-[#064e3b] font-semibold' : 'text-slate-600 hover:text-[#003527]'}`}
+            className={`flex items-center gap-1.5 text-sm ${pathname === '/' ? 'text-[#064e3b] font-semibold' : 'text-slate-600 hover:text-[#003527]'}`}
           >
             <Compass size={16} /> Explore Properties
           </NextLink>
@@ -50,7 +63,7 @@ export function Navigation() {
           {isAuthenticated && isAdminUser && (
             <NextLink 
               href="/admin" 
-              className={`flex items-center gap-1.5 text-sm ${isAdminPath ? 'text-[#064e3b] font-semibold' : 'text-slate-600 hover:text-[#003527]'}`}
+              className={`flex items-center gap-1.5 text-sm ${pathname.startsWith('/admin') ? 'text-[#064e3b] font-semibold' : 'text-slate-600 hover:text-[#003527]'}`}
             >
               <LayoutDashboard size={16} /> Admin Portal
             </NextLink>
@@ -113,4 +126,3 @@ export function Navigation() {
   );
 }
 export default Navigation;
-

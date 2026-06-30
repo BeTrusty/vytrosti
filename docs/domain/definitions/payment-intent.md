@@ -6,7 +6,7 @@ A Payment Intent represents a customer's commitment to pay for a booking. It lin
 - `id` (UUID): Unique internal identifier.
 - `reservation_id` (UUID): References the reservation.
 - `wallet_id` (UUID): References the leased pool wallet.
-- `amount_usdt` (Numeric): Total payment required (rent subtotal + security deposit + fees).
+- `amount_usdt` (Numeric): First payment required to confirm the reservation (rent subtotal + platform fee). The security deposit is tracked separately and secured later in escrow.
 - `status` (Enum): `pending`, `paid`, `expired`.
 - `expires_at` (Timestamp): Expiration timeline (typically 15-30 minutes).
 - `tx_hash` (String): The transaction hash once matched.
