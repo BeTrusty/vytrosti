@@ -44,8 +44,27 @@ export function PaymentQRPanel({
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const walletExplorerUrl = `${stellarExplorerBaseUrl}${walletPublicKey}`;
+
   const handleVerify = () => {
     startVerify(async () => {
+      toast.info(
+        <>Scanning account {shortenAddress(walletPublicKey)}…</>,
+        {
+          description: (
+            <a
+              href={walletExplorerUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-emerald-700 underline underline-offset-2"
+            >
+              View account on Stellar Expert
+            </a>
+          ),
+          timeout: 0,
+        }
+      );
+
       const result = await fetch('/api/dev/verify-payment', {
         method: 'POST',
         headers: {
@@ -60,19 +79,58 @@ export function PaymentQRPanel({
           success: Boolean(data.success),
           paymentDetected: Boolean(data.paymentDetected),
           status: typeof data.status === 'string' || data.status === null ? data.status : null,
+          txHash: typeof data.txHash === 'string' ? data.txHash : undefined,
           error: typeof data.error === 'string' ? data.error : undefined,
         };
       });
 
       if (!result.success) {
-        toast.danger(result.error || 'Verification failed. Please try again.');
+        toast.danger(
+          result.error || 'Verification failed. Please try again.',
+          { timeout: 0 }
+        );
         return;
       }
       if (result.paymentDetected) {
-        toast.success('Transfer confirmed! Reservation is now active.');
+        const txHref = result.txHash
+          ? stellarExplorerBaseUrl.replace('/account/', '/tx/') + result.txHash
+          : null;
+
+        toast.success('Transfer confirmed! Reservation is now active.', {
+          description: result.txHash ? (
+            txHref ? (
+              <a
+                href={txHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-emerald-700 underline underline-offset-2"
+              >
+                View transfer on the network
+              </a>
+            ) : (
+              <span className="text-slate-600">Reference: {result.txHash}</span>
+            )
+          ) : undefined,
+          timeout: 0,
+        });
         router.refresh();
       } else {
-        toast.info('No transfer detected yet. The protocol scans ledger every 60 seconds.');
+        toast.info(
+          'No transfer detected yet. The protocol scans ledger every 60 seconds.',
+          {
+            description: (
+              <a
+                href={walletExplorerUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-emerald-700 underline underline-offset-2"
+              >
+                View account on Stellar Expert
+              </a>
+            ),
+            timeout: 0,
+          }
+        );
       }
     });
   };

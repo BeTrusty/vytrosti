@@ -23,23 +23,34 @@ export class PaymentPoller {
     });
 
     for (const wallet of assignedWallets) {
-      const ops = await stellarProvider.pollWalletOperations(
+      const result = await stellarProvider.pollWalletOperations(
         wallet.publicKey,
         wallet.lastHorizonCursor || undefined
       );
 
-      let lastCursor = wallet.lastHorizonCursor;
+      const ops = result.operations;
+      // Advance cursor based on the LAST operation examined in the page,
+      // even when no USDC payments matched (so we don't get stuck on page 1).
+      let lastCursor = result.nextCursor ?? wallet.lastHorizonCursor;
 
       for (const op of ops) {
         lastCursor = op.id;
 
-        // Idempotency check: verify if we already processed this tx hash
+        // Idempotency check: skip if this tx was already processed for this wallet
         const existingTx = await db.query.blockchainTransactions.findFirst({
           where: eq(blockchainTransactions.txHash, op.txHash),
         });
 
         if (existingTx) {
-          continue;
+          // Check whether payment was actually processed (intent already paid)
+          const paidIntent = await db.query.paymentIntents.findFirst({
+            where: and(
+              eq(paymentIntents.walletId, wallet.id),
+              eq(paymentIntents.status, 'paid')
+            ),
+          });
+          if (paidIntent) continue;
+          // Record exists but intent still pending — proceed to process
         }
 
         // Match with pending payment intent
@@ -79,16 +90,21 @@ export class PaymentPoller {
 
         // Process payment receipt
         await db.transaction(async (tx) => {
-          // Log blockchain transaction
-          await tx.insert(blockchainTransactions).values({
-            walletId: wallet.id,
-            txHash: op.txHash,
-            amount: op.amount,
-            assetCode: op.assetCode,
-            fromAddress: op.from,
-            toAddress: op.to,
-            ledgerCursor: op.id,
+          // Log blockchain transaction (skip insert if already exists from mock deposit)
+          const dupCheck = await tx.query.blockchainTransactions.findFirst({
+            where: eq(blockchainTransactions.txHash, op.txHash),
           });
+          if (!dupCheck) {
+            await tx.insert(blockchainTransactions).values({
+              walletId: wallet.id,
+              txHash: op.txHash,
+              amount: op.amount,
+              assetCode: op.assetCode,
+              fromAddress: op.from,
+              toAddress: op.to,
+              ledgerCursor: op.id,
+            });
+          }
 
           // Mark payment intent as paid
           await tx

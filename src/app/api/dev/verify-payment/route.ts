@@ -32,6 +32,7 @@ export async function POST(request: Request) {
         success: true,
         paymentDetected: true,
         status: 'paid',
+        txHash: intentBefore.txHash,
       });
     }
 
@@ -45,6 +46,7 @@ export async function POST(request: Request) {
       success: true,
       paymentDetected: intentAfter?.status === 'paid',
       status: intentAfter?.status ?? null,
+      txHash: intentAfter?.txHash ?? null,
     });
   } catch (error) {
     console.error('Verify payment route failed:', error);

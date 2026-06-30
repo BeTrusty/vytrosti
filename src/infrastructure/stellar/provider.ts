@@ -14,6 +14,14 @@ export interface StellarTransaction {
   createdAt: string;
 }
 
+export interface PollResult {
+  operations: StellarTransaction[];
+  // Cursor marking the last operation *examined* in this page
+  // (even if no operations matched the USDC filter),
+  // so the poller can always advance and not get stuck on page 1.
+  nextCursor: string | null;
+}
+
 export interface StellarAssetReadiness {
   publicKey: string;
   exists: boolean;
@@ -44,51 +52,77 @@ export class StellarProvider {
   }
 
   // Poll operations for a wallet address
-  async pollWalletOperations(publicKey: string, lastCursor?: string): Promise<StellarTransaction[]> {
+  async pollWalletOperations(publicKey: string, lastCursor?: string): Promise<PollResult> {
     if (this.isMock) {
-      // Mocks are handled by simulated deposits in the DB (see mock actions)
-      return [];
+      const mockOps = await db.query.blockchainTransactions.findMany({
+        where: eq(blockchainTransactions.toAddress, publicKey),
+        orderBy: (tx, { asc }) => [asc(tx.processedAt)],
+      });
+      const ops = mockOps.map((tx) => ({
+        id: tx.ledgerCursor,
+        txHash: tx.txHash,
+        from: tx.fromAddress,
+        to: tx.toAddress,
+        amount: tx.amount,
+        assetCode: tx.assetCode,
+        assetIssuer: '',
+        createdAt: tx.processedAt.toISOString(),
+      }));
+      return { operations: ops, nextCursor: ops.length > 0 ? ops[ops.length - 1].id : null };
     }
 
     if (!this.server) throw new Error('Horizon server not initialized');
 
     try {
-      let query = this.server.operations().forAccount(publicKey).order('asc');
-      if (lastCursor) {
-        query = query.cursor(lastCursor);
-      }
-
-      const response = await query.call();
       const usdcCode = process.env.STELLAR_USDC_ASSET_CODE || 'USDC';
       const usdcIssuer = process.env.STELLAR_USDC_ASSET_ISSUER || '';
 
+      let nextCursor: string | null = null;
       const txs: StellarTransaction[] = [];
-      for (const op of response.records) {
-        // We only care about payments (payment operations)
-        if (op.type === 'payment') {
-          const paymentOp = op as StellarSdk.Horizon.ServerApi.PaymentOperationRecord;
-          // Filter by USDC asset code & issuer (if defined)
-          const isUsdc = paymentOp.asset_code === usdcCode && 
-            (!usdcIssuer || paymentOp.asset_issuer === usdcIssuer);
 
-          if (isUsdc) {
-            txs.push({
-              id: paymentOp.paging_token,
-              txHash: paymentOp.transaction_hash,
-              from: paymentOp.from,
-              to: paymentOp.to,
-              amount: paymentOp.amount,
-              assetCode: paymentOp.asset_code || '',
-              assetIssuer: paymentOp.asset_issuer || '',
-              createdAt: paymentOp.created_at,
-            });
+      // Paginate through ALL pages to collect every matching USDC payment
+      let page = this.server.operations().forAccount(publicKey).order('asc');
+      if (lastCursor) {
+        page = page.cursor(lastCursor);
+      }
+
+      let response = await page.call();
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        for (const op of response.records) {
+          nextCursor = op.paging_token;
+          // We only care about payments (payment operations)
+          if (op.type === 'payment') {
+            const paymentOp = op as StellarSdk.Horizon.ServerApi.PaymentOperationRecord;
+            // Filter by USDC asset code & issuer (if defined)
+            const isUsdc = paymentOp.asset_code === usdcCode &&
+              (!usdcIssuer || paymentOp.asset_issuer === usdcIssuer);
+
+            if (isUsdc) {
+              txs.push({
+                id: paymentOp.paging_token,
+                txHash: paymentOp.transaction_hash,
+                from: paymentOp.from,
+                to: paymentOp.to,
+                amount: paymentOp.amount,
+                assetCode: paymentOp.asset_code || '',
+                assetIssuer: paymentOp.asset_issuer || '',
+                createdAt: paymentOp.created_at,
+              });
+            }
           }
         }
+
+        const nextResponse = await response.next();
+        // If the next page has no records, we've reached the end
+        if (nextResponse.records.length === 0) break;
+        response = nextResponse;
       }
-      return txs;
+
+      return { operations: txs, nextCursor };
     } catch (error) {
       console.error(`Error scanning ledger operations for account ${publicKey}:`, error);
-      return [];
+      return { operations: [], nextCursor: null };
     }
   }
 
