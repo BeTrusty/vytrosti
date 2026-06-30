@@ -114,7 +114,7 @@ export function BookingForm({ listingId, pricePerNightUsdt, securityDepositUsdt 
                 type="date"
                 value={checkIn}
                 onChange={(e) => setCheckIn(e.target.value)}
-                isDisabled={isAdminUser}
+                disabled={isAdminUser}
                 required
                 className="bg-[#f2f3ff] border border-[#eaedff] focus-within:border-[#064e3b] rounded-xl px-3 py-2 w-full text-sm"
               />
@@ -125,7 +125,7 @@ export function BookingForm({ listingId, pricePerNightUsdt, securityDepositUsdt 
                 type="date"
                 value={checkOut}
                 onChange={(e) => setCheckOut(e.target.value)}
-                isDisabled={isAdminUser}
+                disabled={isAdminUser}
                 required
                 className="bg-[#f2f3ff] border border-[#eaedff] focus-within:border-[#064e3b] rounded-xl px-3 py-2 w-full text-sm"
               />

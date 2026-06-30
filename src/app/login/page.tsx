@@ -118,7 +118,7 @@ function LoginForm() {
                     Use quick fill to load a review account instantly.
                   </p>
                 </div>
-                <Chip size="sm" variant="flat" className="precision-callout__chip">
+                <Chip size="sm" variant="soft" className="precision-callout__chip">
                   Demo
                 </Chip>
               </div>

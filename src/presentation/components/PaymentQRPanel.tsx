@@ -320,7 +320,7 @@ export function PaymentQRPanel({
               </div>
               <Chip
                 size="sm"
-                variant="flat"
+                variant="soft"
                 className="precision-callout__chip"
               >
                 {demoModeLabel}
